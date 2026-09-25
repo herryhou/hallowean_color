@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>COLOR ??%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   COLOR ??%  —  styles.css
+   Museum / editorial / De Stijl-inspired design system.
+   Palette: black, white, red, yellow, blue. No gradients, no glass, no neon.
+   ========================================================================= */
+
+:root {
+  --black: #000000;
+  --white: #FFFFFF;
+  --red: #ED1C24;
+  --yellow: #FFD800;
+  --blue: #1557E8;
+  --gray-line: #E4E4E4;
+  --gray-mid: #B0B0B0;
+  --gray-bg: #F6F6F4;
+
+  --font-display: "Archivo Black", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+
+  --step-1: 250ms;
+  --step-2: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input {
+  font-family: inherit;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------------------------- NAV ---------------------------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: var(--white);
+  border-bottom: 2px solid var(--black);
+}
+
+.nav-logo {
+  background: none;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 0;
+  color: var(--black);
+}
+
+.nav-links {
+  display: flex;
+  gap: 18px;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  cursor: pointer;
+  padding: 6px 2px;
+  position: relative;
+  min-height: 44px;
+}
+
+.nav-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 8px;
+  height: 3px;
+  background: var(--black);
+}
+
+/* ---------------------------- HOME ---------------------------- */
+.view-home {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+}
+
+.mondrian-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.5fr;
+  grid-template-rows: 90px 60px 70px;
+  grid-template-areas:
+    "a b c"
+    "a d e"
+    "f d g";
+  gap: 3px;
+  padding: 3px;
+  background: var(--black);
+  border-bottom: 3px solid var(--black);
+}
+
+.block { display: block; width: 100%; height: 100%; }
+.b-white { background: var(--white); }
+.b-red { background: var(--red); }
+.b-yellow { background: var(--yellow); }
+.b-blue { background: var(--blue); }
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px 80px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 14vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.hero-sub-en {
+  margin: 18px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.hero-sub-zh {
+  margin: 0 0 40px;
+  font-size: 15px;
+  color: #4a4a4a;
+}
+
+.cta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta {
+  min-width: 180px;
+  min-height: 64px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--step-1) ease, background var(--step-1) ease, color var(--step-1) ease;
+}
+
+.cta-line1 { font-size: 11px; letter-spacing: 0.12em; font-weight: 600; }
+.cta-line2 { font-family: var(--font-display); font-size: 18px; margin-top: 2px; }
+
+.cta:active { transform: scale(0.97); }
+.cta-primary:hover { background: var(--black); color: var(--white); }
+.cta-secondary:hover { background: var(--gray-bg); }
+
+/* ---------------------------- STEP INDICATOR ---------------------------- */
+.step-indicator {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 16px 8px;
+  overflow-x: auto;
+  gap: 4px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 46px;
+}
+
+.step-dot {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--white);
+  color: var(--black);
+  transition: background var(--step-1) ease, color var(--step-1) ease;
+}
+
+.step-dot.is-done { background: var(--black); color: var(--white); }
+.step-dot.is-active { background: var(--black); color: var(--white); box-shadow: 0 0 0 3px var(--gray-bg); }
+
+.step-label {
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: #666;
+  text-align: center;
+}
+
+/* ---------------------------- FLOW / STEP PANELS ---------------------------- */
+.flow-stage {
+  padding: 8px 20px 60px;
+  max-width: 640px;
+  margin: 0 auto;
+  animation: fadeSlideIn var(--step-2) ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 24px 0 6px;
+}
+
+.step-number {
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.step-heading h2 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  margin: 0;
+}
+
+.step-sub {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #666;
+  margin: 0 0 24px;
+}
+
+.step-actions {
+  margin-top: 32px;
+}
+
+.step-actions-split {
+  display: flex;
+  gap: 12px;
+}
+
+.step-actions-split .btn { flex: 1; }
+
+.btn {
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform var(--step-1) ease, background var(--step-1) ease, color var(--step-1) ease, opacity var(--step-1) ease;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--black); color: var(--white); }
+.btn-primary:hover { opacity: 0.85; }
+.btn-outline:hover { background: var(--gray-bg); }
+.btn-full { width: 100%; }
+.btn-text {
+  border: none;
+  background: none;
+  text-decoration: underline;
+  font-size: 12px;
+  color: #555;
+}
+.btn.is-disabled { opacity: 0.35; cursor: not-allowed; }
+
+.field-error {
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0 0;
+}
+
+/* ---------------------------- PHOTO SLOTS ---------------------------- */
+.photo-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 520px) {
+  .photo-slots { grid-template-columns: 1fr; }
+}
+
+.photo-slot-head {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.photo-slot-en { font-weight: 800; font-size: 13px; letter-spacing: 0.06em; }
+.photo-slot-zh { font-size: 11px; color: #777; }
+
+.photo-preview {
+  aspect-ratio: 9/16;
+  border: 2px solid var(--black);
+  background: var(--gray-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.photo-preview img {
+  width: 100%; height: 100%; object-fit: cover;
+  animation: photoIn var(--step-2) ease;
+}
+
+@keyframes photoIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.photo-placeholder {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gray-mid);
+}
+
+.photo-ready-badge {
+  position: absolute;
+  bottom: 8px; left: 8px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 10px;
+  padding: 4px 8px;
+  animation: checkIn var(--step-2) ease;
+}
+
+.photo-adjust-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--white);
+  border: 1px solid var(--black);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 5px 9px;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.crop-modal { max-width: 300px; }
+.crop-hint { font-size: 11px; color: #666; margin: 0 0 12px; }
+.crop-frame {
+  overflow: hidden;
+  border: 2px solid var(--black);
+  position: relative;
+  margin: 0 auto 16px;
+  touch-action: none;
+  background: var(--gray-bg);
+}
+.crop-img {
+  position: absolute;
+  top: 0; left: 0;
+  max-width: none;
+  will-change: transform;
+}
+.crop-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.crop-zoom-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
+.crop-zoom-slider { flex: 1; }
+
+@keyframes checkIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.photo-btn-row {
+  display: flex;
+  gap: 8px;
+}
+
+.photo-btn-row .btn { flex: 1; padding: 0 8px; font-size: 11px; }
+
+/* ---------------------------- CHECK STEP ---------------------------- */
+.check-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 520px) {
+  .check-row { grid-template-columns: 1fr; }
+}
+
+.check-card-label { font-weight: 800; font-size: 13px; margin-bottom: 8px; }
+
+.check-photo-box {
+  aspect-ratio: 9/16;
+  border: 2px solid var(--black);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.check-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.check-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #333;
+}
+
+/* ---------------------------- COLOR STEP ---------------------------- */
+.color-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.color-card {
+  aspect-ratio: 1;
+  border: 2px solid var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--white);
+  position: relative;
+  transition: transform var(--step-1) ease, border-width var(--step-1) ease;
+}
+
+.color-red { background: var(--red); }
+.color-yellow { background: var(--yellow); color: var(--black); }
+.color-blue { background: var(--blue); }
+
+.color-card.is-selected {
+  transform: scale(1.03);
+  border-width: 4px;
+}
+
+.color-card-en { font-family: var(--font-display); font-size: 16px; }
+.color-card-zh { font-size: 12px; }
+.color-card-check {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 16px;
+  animation: checkIn var(--step-1) ease;
+}
+
+/* ---------------------------- ANALYZE ---------------------------- */
+.step-panel-analyze {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+.analyze-anim {
+  width: 220px; height: 220px;
+  border: 2px solid var(--black);
+  position: relative;
+  margin: 30px 0;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--black) 1px, transparent 1px) 0 0 / 100% 33.33%,
+    linear-gradient(90deg, var(--black) 1px, transparent 1px) 0 0 / 33.33% 100%;
+}
+
+.analyze-grid { position: relative; width: 100%; height: 100%; }
+
+.a-block {
+  position: absolute;
+  width: 33.33%;
+  height: 33.33%;
+  animation: blockSlide 2.2s ease-in-out infinite;
+}
+
+.a-red { background: var(--red); top: 0; left: 0; animation-delay: 0s; }
+.a-yellow { background: var(--yellow); top: 33.33%; left: 66.66%; animation-delay: 0.4s; }
+.a-blue { background: var(--blue); top: 66.66%; left: 33.33%; animation-delay: 0.8s; }
+
+@keyframes blockSlide {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+.analyze-stage {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+/* ---------------------------- RESULT ---------------------------- */
+.result-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 560px) {
+  .result-top { grid-template-columns: 1fr; }
+}
+
+.result-photos { display: flex; gap: 10px; }
+
+.result-photo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.result-photo img {
+  width: 100%;
+  aspect-ratio: 9/16;
+  object-fit: cover;
+  border: 2px solid var(--black);
+}
+
+.result-score-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.result-color-label {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.05em;
+}
+
+.result-score-number {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 12vw, 72px);
+  margin: 4px 0 12px;
+  line-height: 1;
+}
+
+.result-progress-track {
+  height: 10px;
+  background: var(--gray-bg);
+  border: 1px solid var(--black);
+  overflow: hidden;
+}
+
+.result-progress-fill { height: 100%; transition: width 0.05s linear; }
+
+.bg-red { background: var(--red); }
+.bg-yellow { background: var(--yellow); }
+.bg-blue { background: var(--blue); }
+.text-red { color: var(--red); }
+.text-yellow { color: #B8940A; }
+.text-blue { color: var(--blue); }
+
+.result-verdict {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+.verdict-low { animation: shake 0.4s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.result-breakdown {
+  border-top: 2px solid var(--black);
+  padding-top: 14px;
+  margin-bottom: 24px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--gray-line);
+}
+
+.breakdown-final { font-weight: 800; font-size: 15px; }
+
+.formula-line {
+  font-size: 11px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.formula-standard { font-weight: 700; color: var(--black); }
+
+.result-analysis-info {
+  border: 1px solid var(--gray-line);
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.analysis-info-title {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.analysis-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 6px;
+  font-size: 12px;
+}
+
+.mask-section { margin-bottom: 20px; border-top: 1px solid var(--gray-line); padding-top: 14px; }
+.mask-title { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; margin: 0 0 8px; }
+.mask-row { display: flex; gap: 12px; margin-top: 4px; }
+.mask-item { flex: 1; text-align: center; font-size: 10px; font-weight: 700; }
+.mask-item img { width: 100%; border: 1px solid var(--black); background: var(--black); }
+.mask-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.legend-chip { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #555; }
+.legend-swatch { width: 10px; height: 10px; display: inline-block; border: 1px solid var(--black); }
+.legend-swatch-gray { background: #b0b0b0; }
+.legend-swatch-black { background: var(--black); }
+
+/* ---------------------------- SAVE ---------------------------- */
+.field-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 6px; }
+.text-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--black);
+  font-size: 14px;
+  margin-bottom: 14px;
+  background: var(--white);
+  color: var(--black);
+}
+.notice-text { font-size: 11px; color: #666; margin-bottom: 18px; line-height: 1.5; }
+.save-done { display: flex; gap: 10px; margin-top: 16px; }
+
+/* ---------------------------- RANKING ---------------------------- */
+.page-heading { padding: 30px 20px 10px; max-width: 720px; margin: 0 auto; }
+.page-eyebrow { font-size: 11px; letter-spacing: 0.12em; color: #888; }
+.page-heading h2 { font-family: var(--font-display); font-size: 32px; margin: 4px 0 0; }
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 20px 20px;
+  max-width: 720px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-chip.is-active { background: var(--black); color: var(--white); }
+
+.ranking-list {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ranking-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-line);
+  background: none;
+  border-left: none; border-right: none; border-top: none;
+  text-align: left;
+  cursor: pointer;
+  animation: fadeSlideIn var(--step-2) ease;
+}
+
+.rank-number { font-family: var(--font-display); font-size: 16px; width: 26px; }
+
+.rank-photo {
+  width: 54px; height: 54px;
+  border: 1px solid var(--black);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.rank-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+.rank-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.rank-name { font-weight: 700; font-size: 14px; }
+.rank-color { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
+.rank-score { font-weight: 800; font-size: 16px; }
+.rank-arrow { font-size: 20px; color: #999; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.empty-title { font-family: var(--font-display); font-size: 20px; margin: 0; }
+.empty-sub { color: #777; margin: 0; }
+
+/* ---------------------------- DETAIL ---------------------------- */
+.view-detail { max-width: 720px; margin: 0 auto; padding: 20px 20px 80px; }
+.back-link { margin-bottom: 16px; padding: 0; }
+.detail-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.detail-head h2 { font-family: var(--font-display); font-size: 26px; margin: 0; }
+.detail-color { font-weight: 800; font-size: 14px; }
+.detail-score { font-family: var(--font-display); font-size: 22px; margin-left: auto; }
+
+.detail-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.detail-photo { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-weight: 700; text-align: center; }
+.detail-photo img { width: 100%; aspect-ratio: 9/16; object-fit: cover; border: 2px solid var(--black); }
+
+.delete-zone { margin-top: 60px; text-align: center; }
+.delete-link {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: #aaa;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* ---------------------------- ABOUT ---------------------------- */
+.view-about { max-width: 720px; margin: 0 auto; padding-bottom: 60px; }
+.about-block { padding: 20px; border-top: 1px solid var(--gray-line); }
+.about-block h3 { font-family: var(--font-display); font-size: 16px; margin: 0 0 10px; }
+.about-block p { font-size: 13px; line-height: 1.6; margin: 0 0 8px; color: #333; }
+.about-block p.zh { color: #666; }
+
+.how-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.how-list li { display: flex; gap: 12px; align-items: baseline; font-size: 13px; }
+.how-num { font-family: var(--font-display); font-size: 14px; }
+
+.wheel-block { display: flex; flex-direction: column; align-items: center; }
+.hue-wheel {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  border: 2px solid var(--black);
+  display: flex; align-items: center; justify-content: center;
+  margin: 10px 0 16px;
+}
+.hue-wheel-center {
+  width: 90px; height: 90px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; text-align: center;
+  white-space: pre-line;
+  border: 2px solid var(--black);
+}
+.wheel-legend { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; font-size: 11px; font-weight: 700; }
+.legend-item { color: #666; }
+
+.standards-grid { display: flex; flex-direction: column; gap: 20px; }
+.standard-card { border: 1px solid var(--gray-line); padding: 14px; }
+.standard-card h3 { margin-bottom: 10px; }
+.standard-row {
+  display: grid;
+  grid-template-columns: 16px 90px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding: 4px 0;
+}
+.standard-swatch { width: 16px; height: 16px; border: 1px solid var(--black); }
+.standard-range { font-weight: 700; }
+.standard-weight { text-align: right; font-weight: 700; }
+
+/* ---------------------------- MODAL ---------------------------- */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeSlideIn var(--step-1) ease;
+}
+.modal {
+  background: var(--white);
+  border: 2px solid var(--black);
+  padding: 24px;
+  max-width: 320px;
+  width: 100%;
+}
+.modal-title { font-family: var(--font-display); font-size: 16px; margin: 0 0 8px; }
+.modal-sub { font-size: 12px; color: #666; margin: 0 0 16px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 12px; }
+.modal-actions .btn { flex: 1; }
+
+/* ---------------------------- CELEBRATION ---------------------------- */
+.celebrate-layer {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+.celebrate-piece {
+  position: absolute;
+  top: -20px;
+  width: 12px; height: 12px;
+  animation: fall 1.4s ease-in forwards;
+}
+.c-red { background: var(--red); }
+.c-yellow { background: var(--yellow); }
+.c-blue { background: var(--blue); }
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(180deg); opacity: 0.2; }
+}
+
+/* ---------------------------- TOAST ---------------------------- */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--black);
+  color: var(--white);
+  padding: 10px 18px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity var(--step-1) ease, transform var(--step-1) ease;
+  z-index: 300;
+  pointer-events: none;
+}
+.toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------------------------- FOCUS STATES ---------------------------- */
+button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+</style>
+</head>
+<body>
+<div id="app-root"></div>
+<script>
+/* =========================================================================
+   COLOR ??%  —  app.js
+   Core logic: color standard, scoring engine, segmentation interface,
+   storage manager, and UI flow controller.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   00. FIXED OFFICIAL COLOR STANDARD  —  COLOR_STANDARD_V1
+   This object is the single source of truth for all scoring.
+   It must never be edited per-session or per-user. Any future change to
+   these ranges must ship as COLOR_STANDARD_V2, and old results keep the
+   version they were scored under.
+   ------------------------------------------------------------------------- */
+const COLOR_STANDARD_VERSION = "COLOR_STANDARD_V3";
+
+/* V2 change: binary CORE-only classification (TRANSITION band removed).
+   Ranges confirmed by the user via the interactive hue-range picker. */
+const COLOR_STANDARD = {
+  RED: {
+    core: [
+      [294, 360],
+      [0, 20]
+    ]
+  },
+  YELLOW: {
+    core: [
+      [35, 67]
+    ]
+  },
+  BLUE: {
+    core: [
+      [180, 251]
+    ]
+  }
+};
+
+const SAT_MIN = 0.22; // below this = NON-TARGET (loosened from 0.30: fabric folds catching
+                       // light desaturate toward white without changing hue — too strict a
+                       // cutoff was dropping real target-color fabric, not just background)
+const VAL_MIN = 0.12; // below this = NON-TARGET (loosened from 0.20: shadowed creases on the
+                       // same fabric darken without changing hue)
+
+const COLOR_HEX = {
+  RED: [237, 28, 36],
+  YELLOW: [255, 216, 0],
+  BLUE: [21, 87, 232]
+};
+
+/* -------------------------------------------------------------------------
+   01. HUE / WEIGHT CLASSIFICATION  (fixed, deterministic, no AI judgement)
+   ------------------------------------------------------------------------- */
+function isHueInRange(h, min, max) {
+  if (min <= max) {
+    return h >= min && h < max;
+  }
+  return h >= min || h < max;
+}
+
+function getColorWeight(h, s, v, targetColor) {
+  if (s < SAT_MIN || v < VAL_MIN) {
+    return 0;
+  }
+  const standard = COLOR_STANDARD[targetColor];
+  if (!standard) return 0;
+
+  for (const range of standard.core) {
+    if (isHueInRange(h, range[0], range[1])) return 1.0;
+  }
+  return 0;
+}
+
+/* V3 SKIN RULE
+   Skin (face + body) always belongs to the person area (denominator).
+   A skin pixel counts toward the score ONLY if it matches the target color
+   AND is clearly not natural skin tone — i.e. it's body paint / makeup.
+   Natural skin sits in a warm hue band with moderate saturation; paint is
+   far more saturated. Blue paint never overlaps natural skin at all. */
+const SKIN_HUE_BAND = [350, 50];     // natural skin hue band (wraps past 0°)
+const SKIN_PAINT_SAT_MIN = 0.62;     // inside that band, paint must be at least this saturated
+
+function isNaturalSkinTone(h, s) {
+  const inBand = h >= SKIN_HUE_BAND[0] || h < SKIN_HUE_BAND[1];
+  return inBand && s < SKIN_PAINT_SAT_MIN;
+}
+
+function rgbToHsv(r, g, b) {
+  // r,g,b in [0,1]
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const d = max - min;
+  let h = 0;
+  if (d !== 0) {
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+  const s = max === 0 ? 0 : d / max;
+  const v = max;
+  return { h, s, v };
+}
+
+/* -------------------------------------------------------------------------
+   02. PERSON SEGMENTATION — industry-standard approach
+   getPersonMask(imgEl, width, height) is async and returns
+   { mask, skinMask, width, height, source: "model" | "heuristic" }
+     mask[p]     === 1  -> pixel belongs to the main person
+     skinMask[p] === 1  -> pixel is face or body skin (model only)
+
+   PRIMARY PATH — Google MediaPipe Image Segmenter (Tasks Vision) with the
+   "selfie_multiclass_256x256" model. This is the same class of approach
+   used by video-call background tools and background-removal apps: a
+   trained neural network labels every pixel, not a color rule. Classes:
+     0 background, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others
+   Person = classes 1–5. Skin (2, 3) is reported separately so unpainted
+   skin can be kept out of the score while painted skin still counts.
+   CPU delegate is used on purpose: the GPU delegate is known to scramble
+   the class order on iOS Safari.
+
+   HOSTING NOTE: the WASM runtime loads from jsdelivr and the model file
+   (~16MB) from storage.googleapis.com. A normal host (GitHub Pages etc.)
+   allows both. A sandboxed preview that blocks outside network requests
+   will make the model fail, and the app falls back automatically.
+
+   FALLBACK — segmentPersonHeuristic(): a color/flood-fill estimate, used
+   only when the model can't load. It is NOT real segmentation.
+   ------------------------------------------------------------------------- */
+
+const TASKS_VISION_BASE = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304";
+const MULTICLASS_MODEL_URL =
+  "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite";
+const SEG_CLASS = { BACKGROUND: 0, HAIR: 1, BODY_SKIN: 2, FACE_SKIN: 3, CLOTHES: 4, OTHERS: 5 };
+
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(label + "-timeout")), ms))
+  ]);
+}
+
+let imageSegmenterPromise = null;
+function getImageSegmenter() {
+  if (!imageSegmenterPromise) {
+    imageSegmenterPromise = (async () => {
+      const vision = await import(TASKS_VISION_BASE + "/vision_bundle.mjs");
+      const fileset = await vision.FilesetResolver.forVisionTasks(TASKS_VISION_BASE + "/wasm");
+      return vision.ImageSegmenter.createFromOptions(fileset, {
+        baseOptions: { modelAssetPath: MULTICLASS_MODEL_URL, delegate: "CPU" },
+        runningMode: "IMAGE",
+        outputCategoryMask: true,
+        outputConfidenceMasks: false
+      });
+    })();
+    imageSegmenterPromise.catch(() => { imageSegmenterPromise = null; });
+  }
+  return imageSegmenterPromise;
+}
+
+/* Starts downloading the model in the background as soon as the page
+   opens, so it's usually ready by the time the user reaches ANALYZE. */
+function preloadSegmenter() {
+  getImageSegmenter().catch(() => {});
+}
+
+async function segmentPersonModel(imgEl, width, height) {
+  const segmenter = await withTimeout(getImageSegmenter(), 30000, "segmenter-load");
+  const input = document.createElement("canvas");
+  input.width = width; input.height = height;
+  input.getContext("2d").drawImage(imgEl, 0, 0, width, height);
+
+  const result = segmenter.segment(input);
+  const categoryMask = result.categoryMask;
+  const cats = categoryMask.getAsUint8Array();
+  const mw = categoryMask.width, mh = categoryMask.height;
+
+  const mask = new Uint8Array(width * height);
+  const skinMask = new Uint8Array(width * height);
+  for (let y = 0; y < height; y++) {
+    const sy = Math.min(mh - 1, Math.floor(y * mh / height));
+    for (let x = 0; x < width; x++) {
+      const sx = Math.min(mw - 1, Math.floor(x * mw / width));
+      const c = cats[sy * mw + sx];
+      const p = y * width + x;
+      if (c !== SEG_CLASS.BACKGROUND) mask[p] = 1;
+      if (c === SEG_CLASS.FACE_SKIN || c === SEG_CLASS.BODY_SKIN) skinMask[p] = 1;
+    }
+  }
+  if (typeof result.close === "function") result.close();
+  else if (typeof categoryMask.close === "function") categoryMask.close();
+  return { mask, skinMask };
+}
+
+function segmentPersonHeuristic(imageData) {
+  const { data, width, height } = imageData;
+  const total = width * height;
+
+  function colorAt(p) {
+    const i = p * 4;
+    return [data[i], data[i + 1], data[i + 2]];
+  }
+  function dist(a, b) {
+    const dr = a[0] - b[0], dg = a[1] - b[1], db = a[2] - b[2];
+    return Math.sqrt(dr * dr + dg * dg + db * db);
+  }
+  function median(arr) {
+    const s = arr.slice().sort((a, b) => a - b);
+    return s[Math.floor(s.length / 2)];
+  }
+
+  const borderR = [], borderG = [], borderB = [];
+  const step = Math.max(1, Math.floor(Math.min(width, height) / 60));
+  for (let x = 0; x < width; x += step) {
+    let c = colorAt(x); borderR.push(c[0]); borderG.push(c[1]); borderB.push(c[2]);
+    c = colorAt((height - 1) * width + x); borderR.push(c[0]); borderG.push(c[1]); borderB.push(c[2]);
+  }
+  for (let y = 0; y < height; y += step) {
+    let c = colorAt(y * width); borderR.push(c[0]); borderG.push(c[1]); borderB.push(c[2]);
+    c = colorAt(y * width + (width - 1)); borderR.push(c[0]); borderG.push(c[1]); borderB.push(c[2]);
+  }
+  const bg = [median(borderR), median(borderG), median(borderB)];
+
+  const THRESHOLD = 46;
+  const isBackground = new Uint8Array(total);
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  let qTail = 0;
+
+  function considerBackground(p) {
+    if (visited[p]) return;
+    visited[p] = 1;
+    if (dist(colorAt(p), bg) < THRESHOLD) {
+      isBackground[p] = 1;
+      queue[qTail++] = p;
+    }
+  }
+
+  for (let x = 0; x < width; x++) {
+    considerBackground(x);
+    considerBackground((height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y++) {
+    considerBackground(y * width);
+    considerBackground(y * width + (width - 1));
+  }
+
+  let qHead = 0;
+  while (qHead < qTail) {
+    const p = queue[qHead++];
+    const x = p % width, y = (p / width) | 0;
+    if (x > 0) considerBackground(p - 1);
+    if (x < width - 1) considerBackground(p + 1);
+    if (y > 0) considerBackground(p - width);
+    if (y < height - 1) considerBackground(p + width);
+  }
+
+  const mask = new Uint8Array(total);
+  for (let p = 0; p < total; p++) mask[p] = isBackground[p] ? 0 : 1;
+  return mask;
+}
+
+/* Keeps only the single largest connected blob of foreground pixels and
+   drops everything else. Photos sometimes have a second person, mannequin,
+   or cropped limb at the edge of frame (a neighboring product shot, someone
+   else standing nearby); without this, that secondary shape gets scored as
+   part of "the person" too. This runs after segmentation regardless of
+   whether the mask came from the real model or the fallback heuristic, so
+   it helps in both cases. */
+function keepLargestComponent(mask, width, height) {
+  const total = width * height;
+  const visited = new Uint8Array(total);
+  const queue = new Int32Array(total);
+  const labels = new Int32Array(total).fill(-1);
+  let bestLabel = -1, bestSize = 0, labelCount = 0;
+
+  for (let start = 0; start < total; start++) {
+    if (mask[start] !== 1 || visited[start]) continue;
+    let qHead = 0, qTail = 0;
+    queue[qTail++] = start;
+    visited[start] = 1;
+    let size = 0;
+    const currentLabel = labelCount++;
+    while (qHead < qTail) {
+      const p = queue[qHead++];
+      labels[p] = currentLabel;
+      size++;
+      const x = p % width, y = (p / width) | 0;
+      if (x > 0 && !visited[p - 1] && mask[p - 1] === 1) { visited[p - 1] = 1; queue[qTail++] = p - 1; }
+      if (x < width - 1 && !visited[p + 1] && mask[p + 1] === 1) { visited[p + 1] = 1; queue[qTail++] = p + 1; }
+      if (y > 0 && !visited[p - width] && mask[p - width] === 1) { visited[p - width] = 1; queue[qTail++] = p - width; }
+      if (y < height - 1 && !visited[p + width] && mask[p + width] === 1) { visited[p + width] = 1; queue[qTail++] = p + width; }
+    }
+    if (size > bestSize) { bestSize = size; bestLabel = currentLabel; }
+  }
+
+  const result = new Uint8Array(total);
+  if (bestLabel === -1) return result;
+  for (let p = 0; p < total; p++) result[p] = labels[p] === bestLabel ? 1 : 0;
+  return result;
+}
+
+/* FAIRNESS: every score must come from the same method. If the AI model
+   can't load, we do NOT silently score with the color fallback (it lets
+   background leak in and would make some entries incomparable). Instead
+   we stop and tell the user why. */
+const MODEL_UNAVAILABLE = "MODEL_UNAVAILABLE";
+const MODEL_UNAVAILABLE_MSG = "AI 人物辨識模型無法載入，請用正式網址（例如 GitHub Pages）開啟網站，並確認網路連線";
+
+async function getPersonMask(imgEl, width, height) {
+  let out;
+  try {
+    out = await segmentPersonModel(imgEl, width, height);
+  } catch (err) {
+    console.warn("Segmentation model unavailable:", err);
+    const e = new Error(MODEL_UNAVAILABLE_MSG);
+    e.code = MODEL_UNAVAILABLE;
+    throw e;
+  }
+  // Only the main person: drop any second person / stray limb in frame.
+  const mask = keepLargestComponent(out.mask, width, height);
+  const skinMask = out.skinMask;
+  for (let p = 0; p < width * height; p++) if (!mask[p]) skinMask[p] = 0;
+  return { mask, skinMask, width, height, source: "model" };
+}
+
+/* Quick check used only for the CHECK PHOTO step: how much of the frame
+   the detected person occupies, and whether they reach near the top and
+   bottom of the frame (a stand-in for "full body, head to toe" — real
+   pose/keypoint detection isn't part of this model). */
+async function computePersonFrameCoverage(imgEl) {
+  const maxDim = 480;
+  const naturalW = imgEl.naturalWidth || imgEl.width;
+  const naturalH = imgEl.naturalHeight || imgEl.height;
+  const scale = Math.min(1, maxDim / Math.max(naturalW, naturalH));
+  const w = Math.max(1, Math.round(naturalW * scale));
+  const h = Math.max(1, Math.round(naturalH * scale));
+  const { mask } = await getPersonMask(imgEl, w, h);
+
+  let minY = h, maxY = -1, count = 0;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (mask[y * w + x]) {
+        count++;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (count === 0) return { topRatio: 1, bottomRatio: 0, coverage: 0 };
+  return { topRatio: minY / h, bottomRatio: maxY / h, coverage: count / (w * h) };
+}
+
+/* -------------------------------------------------------------------------
+   03. SCORING ENGINE
+   ------------------------------------------------------------------------- */
+const scoringEngine = {
+  MAX_DIM: 1400,
+
+  /**
+   * Analyze a single photo (already-loaded <img>) against a target color.
+   * Returns photo score (0-100, full precision), pixel counts, and a
+   * visualization canvas data URL showing exactly what was measured.
+   */
+  async analyzePhoto(imgEl, targetColor) {
+    const naturalW = imgEl.naturalWidth || imgEl.width;
+    const naturalH = imgEl.naturalHeight || imgEl.height;
+    const scale = Math.min(1, this.MAX_DIM / Math.max(naturalW, naturalH));
+    const w = Math.max(1, Math.round(naturalW * scale));
+    const h = Math.max(1, Math.round(naturalH * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(imgEl, 0, 0, w, h);
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const { mask, skinMask, source: maskSource } = await getPersonMask(imgEl, w, h);
+    const data = imageData.data;
+
+    let personPixels = 0;
+    let weightedTarget = 0;
+
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = w; maskCanvas.height = h;
+    const maskCtx = maskCanvas.getContext("2d");
+    const maskOut = maskCtx.createImageData(w, h);
+    const targetRgb = COLOR_HEX[targetColor] || [128, 128, 128];
+
+    for (let p = 0; p < w * h; p++) {
+      const i = p * 4;
+      if (mask[p] === 1) {
+        personPixels++;
+        const isSkin = skinMask ? skinMask[p] === 1 : false;
+        const r = data[i] / 255, g = data[i + 1] / 255, b = data[i + 2] / 255;
+        const { h: hue, s, v } = rgbToHsv(r, g, b);
+        let weight = getColorWeight(hue, s, v, targetColor);
+        if (isSkin && weight > 0 && isNaturalSkinTone(hue, s)) weight = 0; // unpainted skin never scores
+        weightedTarget += weight;
+
+        const col = weight === 1.0 ? targetRgb : [176, 176, 176];
+
+        maskOut.data[i] = col[0];
+        maskOut.data[i + 1] = col[1];
+        maskOut.data[i + 2] = col[2];
+        maskOut.data[i + 3] = 255;
+      } else {
+        maskOut.data[i] = 0;
+        maskOut.data[i + 1] = 0;
+        maskOut.data[i + 2] = 0;
+        maskOut.data[i + 3] = 255;
+      }
+    }
+    maskCtx.putImageData(maskOut, 0, 0);
+
+    const score = personPixels > 0 ? (weightedTarget / personPixels) * 100 : 0;
+    const personRatio = personPixels / (w * h);
+
+    return {
+      score,
+      personPixels,
+      weightedTarget,
+      personRatio,
+      maskDataUrl: maskCanvas.toDataURL("image/png"),
+      maskSource
+    };
+  },
+
+  /**
+   * FRONT and BACK are always weighted 50/50 regardless of photo size,
+   * resolution, or how large the person appears in either photo.
+   */
+  calculateFinalScore(frontScore, backScore) {
+    return (frontScore + backScore) / 2;
+  },
+
+  formatScore(score) {
+    return score.toFixed(1);
+  }
+};
+
+/* -------------------------------------------------------------------------
+   04. STORAGE MANAGER — swappable abstraction (localStorage now, Supabase later)
+   ------------------------------------------------------------------------- */
+const STORAGE_KEY = "colorpct_results_v1";
+
+const storageManager = {
+  getResults() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  },
+  saveResult(result) {
+    try {
+      const results = this.getResults();
+      results.push(result);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+  deleteResult(id) {
+    try {
+      const results = this.getResults().filter(r => r.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+};
+
+const DELETE_PASSWORD = "0051";
+/* NOTE: prototype-only. In production this check must happen server-side
+   (e.g. a Supabase Edge Function), never trusted purely on the client. */
+
+/* =========================================================================
+   05. UI CONTROLLER
+   ========================================================================= */
+const App = (() => {
+  const state = {
+    view: "home", // home | flow | ranking | detail | about
+    step: 1,
+    front: null, // { imgEl, dataUrl }
+    back: null,
+    color: null,
+    analysis: null, // { front:{...}, back:{...}, finalScore }
+    rankingFilter: "ALL",
+    detailId: null,
+    pendingDeleteId: null
+  };
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function el(tag, attrs = {}, children = []) {
+    const node = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === "class") node.className = v;
+      else if (k === "html") node.innerHTML = v;
+      else if (k.startsWith("on") && typeof v === "function") node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v);
+    });
+    (Array.isArray(children) ? children : [children]).forEach(c => {
+      if (c == null) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  }
+
+  function loadImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => resolve({ imgEl: img, dataUrl: reader.result });
+        img.onerror = () => reject(new Error("decode-failed"));
+        img.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error("read-failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadImageFromSrc(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("decode-failed"));
+      img.src = src;
+    });
+  }
+
+  /* Downscale + re-encode before storing. The original camera photos can be
+     several MB each as base64; storing them raw blows past localStorage's
+     ~5-10MB quota and makes SAVE fail silently. */
+  function resizeToDataUrl(imgEl, maxDim, quality, type) {
+    const naturalW = imgEl.naturalWidth || imgEl.width;
+    const naturalH = imgEl.naturalHeight || imgEl.height;
+    const scale = Math.min(1, maxDim / Math.max(naturalW, naturalH));
+    const w = Math.max(1, Math.round(naturalW * scale));
+    const h = Math.max(1, Math.round(naturalH * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    canvas.getContext("2d").drawImage(imgEl, 0, 0, w, h);
+    return canvas.toDataURL(type, quality);
+  }
+
+  function resetFlow() {
+    state.step = 1;
+    state.front = null;
+    state.back = null;
+    state.color = null;
+    state.analysis = null;
+  }
+
+  function goHome() {
+    state.view = "home";
+    render();
+  }
+
+  function startFlow() {
+    resetFlow();
+    state.view = "flow";
+    render();
+  }
+
+  function goRanking() {
+    state.view = "ranking";
+    state.rankingFilter = "ALL";
+    render();
+  }
+
+  function goAbout() {
+    state.view = "about";
+    render();
+  }
+
+  function goDetail(id) {
+    state.detailId = id;
+    state.view = "detail";
+    render();
+  }
+
+  function setStep(n) {
+    state.step = n;
+    render();
+  }
+
+  /* ---------------------------- RENDER ROOT ---------------------------- */
+  const root = () => $("#app-root");
+
+  function render() {
+    const r = root();
+    r.innerHTML = "";
+    r.appendChild(renderNav());
+    let content;
+    switch (state.view) {
+      case "home": content = renderHome(); break;
+      case "flow": content = renderFlow(); break;
+      case "ranking": content = renderRanking(); break;
+      case "detail": content = renderDetail(); break;
+      case "about": content = renderAbout(); break;
+      default: content = renderHome();
+    }
+    r.appendChild(content);
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  }
+
+  /* ------------------------------- NAV ---------------------------------- */
+  function renderNav() {
+    const nav = el("header", { class: "site-nav" }, [
+      el("button", { class: "nav-logo", onclick: goHome, "aria-label": "COLOR ??% home" }, "COLOR ??%"),
+      el("nav", { class: "nav-links" }, [
+        el("button", { class: "nav-link" + (state.view === "flow" ? " is-active" : ""), onclick: startFlow }, "COLOR ??%"),
+        el("button", { class: "nav-link" + (state.view === "ranking" || state.view === "detail" ? " is-active" : ""), onclick: goRanking }, "RANKING"),
+        el("button", { class: "nav-link" + (state.view === "about" ? " is-active" : ""), onclick: goAbout }, "ABOUT")
+      ])
+    ]);
+    return nav;
+  }
+
+  /* ------------------------------- HOME ---------------------------------- */
+  function renderHome() {
+    const wrap = el("main", { class: "view view-home" });
+
+    const grid = el("div", { class: "mondrian-grid", "aria-hidden": "true" }, [
+      el("span", { class: "block b-white", style: "grid-area:a" }),
+      el("span", { class: "block b-red", style: "grid-area:b" }),
+      el("span", { class: "block b-white", style: "grid-area:c" }),
+      el("span", { class: "block b-yellow", style: "grid-area:d" }),
+      el("span", { class: "block b-white", style: "grid-area:e" }),
+      el("span", { class: "block b-blue", style: "grid-area:f" }),
+      el("span", { class: "block b-white", style: "grid-area:g" })
+    ]);
+
+    const hero = el("section", { class: "hero" }, [
+      el("h1", { class: "hero-title" }, "COLOR ??%"),
+      el("p", { class: "hero-sub-en" }, "YOUR COLOR, HOW MUCH?"),
+      el("p", { class: "hero-sub-zh" }, "你的顏色有幾%？"),
+      el("div", { class: "cta-row" }, [
+        el("button", { class: "cta cta-primary", onclick: startFlow }, [
+          el("span", { class: "cta-line1" }, "START"),
+          el("span", { class: "cta-line2" }, "COLOR ??%")
+        ]),
+        el("button", { class: "cta cta-secondary", onclick: goRanking }, [
+          el("span", { class: "cta-line1" }, "VIEW"),
+          el("span", { class: "cta-line2" }, "RANKING")
+        ])
+      ])
+    ]);
+
+    wrap.appendChild(grid);
+    wrap.appendChild(hero);
+    return wrap;
+  }
+
+  /* ------------------------------- FLOW ---------------------------------- */
+  const STEP_LABELS = ["PHOTO", "CHECK", "COLOR", "ANALYZE", "RESULT", "SAVE"];
+
+  function renderStepIndicator() {
+    const bar = el("div", { class: "step-indicator" });
+    for (let i = 1; i <= 6; i++) {
+      const done = i < state.step;
+      const active = i === state.step;
+      const dot = el("div", { class: "step-item" }, [
+        el("span", { class: "step-dot" + (active ? " is-active" : "") + (done ? " is-done" : "") }, String(i).padStart(2, "0")),
+        el("span", { class: "step-label" }, STEP_LABELS[i - 1])
+      ]);
+      bar.appendChild(dot);
+    }
+    return bar;
+  }
+
+  function renderFlow() {
+    const wrap = el("main", { class: "view view-flow" });
+    wrap.appendChild(renderStepIndicator());
+    const stage = el("div", { class: "flow-stage" });
+    switch (state.step) {
+      case 1: stage.appendChild(renderStepPhoto()); break;
+      case 2: stage.appendChild(renderStepCheck()); break;
+      case 3: stage.appendChild(renderStepColor()); break;
+      case 4: stage.appendChild(renderStepAnalyze()); break;
+      case 5: stage.appendChild(renderStepResult()); break;
+      case 6: stage.appendChild(renderStepSave()); break;
+    }
+    wrap.appendChild(stage);
+    return wrap;
+  }
+
+  /* --- Step 01: Choose Photo --- */
+  function renderPhotoSlot(kind, labelEn, labelZh) {
+    const current = state[kind];
+    const slot = el("div", { class: "photo-slot" });
+    slot.appendChild(el("div", { class: "photo-slot-head" }, [
+      el("span", { class: "photo-slot-en" }, labelEn),
+      el("span", { class: "photo-slot-zh" }, labelZh)
+    ]));
+
+    const preview = el("div", { class: "photo-preview" + (current ? " has-photo" : "") });
+    if (current) {
+      const img = el("img", { src: current.dataUrl, alt: labelEn + " preview" });
+      preview.appendChild(img);
+      preview.appendChild(el("span", { class: "photo-ready-badge" }, "✓ PHOTO READY"));
+      preview.appendChild(el("button", {
+        class: "photo-adjust-btn",
+        onclick: () => openCropModal(kind, current)
+      }, "ADJUST"));
+    } else {
+      preview.appendChild(el("span", { class: "photo-placeholder" }, "NO PHOTO"));
+    }
+    slot.appendChild(preview);
+
+    const btnRow = el("div", { class: "photo-btn-row" });
+
+    /* TAKE PHOTO uses capture="environment" so it jumps straight into the
+       camera with no OS picker sheet in between, as requested. NOTE: if the
+       page is viewed inside the published Artifact's sandboxed iframe, the
+       camera preview can come up black — that's the iframe not being
+       granted the "camera" permission, a platform-level restriction this
+       page's code cannot change. If that happens, the fix is running the
+       page from its own real URL (e.g. GitHub Pages) instead of the
+       Artifact preview link. CHOOSE PHOTO has no capture attribute, so it
+       always opens the plain library picker regardless of that issue. */
+    const captureInput = el("input", {
+      type: "file", accept: "image/*", capture: "environment", class: "visually-hidden",
+      onchange: (e) => handlePhotoInput(kind, e)
+    });
+    const libraryInput = el("input", {
+      type: "file", accept: "image/*", class: "visually-hidden",
+      onchange: (e) => handlePhotoInput(kind, e)
+    });
+
+    const takeBtn = el("button", { class: "btn btn-outline", onclick: () => captureInput.click() }, "TAKE PHOTO");
+    const chooseBtn = el("button", { class: "btn btn-outline", onclick: () => libraryInput.click() }, "CHOOSE PHOTO");
+
+    btnRow.appendChild(takeBtn);
+    btnRow.appendChild(chooseBtn);
+    slot.appendChild(btnRow);
+    slot.appendChild(captureInput);
+    slot.appendChild(libraryInput);
+
+    return slot;
+  }
+
+  async function handlePhotoInput(kind, e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      const loaded = await loadImage(file);
+      openCropModal(kind, loaded);
+    } catch (err) {
+      showToast("照片無法讀取，請重新選擇");
+    }
+    e.target.value = "";
+  }
+
+  /* ---------------------------- CROP / ZOOM MODAL ---------------------------- */
+  function openCropModal(kind, loaded) {
+    const FRAME_W = 216, FRAME_H = 384; // 9:16, matches the preview aspect
+    const img = loaded.imgEl;
+    const iw = img.naturalWidth || img.width;
+    const ih = img.naturalHeight || img.height;
+    const minScale = Math.max(FRAME_W / iw, FRAME_H / ih);
+    const maxScale = minScale * 3;
+    let scale = minScale;
+    let tx = (FRAME_W - iw * scale) / 2;
+    let ty = (FRAME_H - ih * scale) / 2;
+
+    const overlay = el("div", { class: "modal-overlay" });
+    const modal = el("div", { class: "modal crop-modal" });
+    modal.appendChild(el("p", { class: "modal-title" }, "ADJUST PHOTO"));
+    modal.appendChild(el("p", { class: "crop-hint" }, "拖曳移動、滑桿縮放，將人物置中對齊"));
+
+    const frame = el("div", { class: "crop-frame", style: `width:${FRAME_W}px;height:${FRAME_H}px;` });
+    const cropImg = el("img", { src: loaded.dataUrl, class: "crop-img", draggable: "false", alt: "" });
+    cropImg.style.width = iw + "px";
+    cropImg.style.height = ih + "px";
+    frame.appendChild(cropImg);
+    modal.appendChild(frame);
+
+    function applyTransform() {
+      cropImg.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+      cropImg.style.transformOrigin = "0 0";
+    }
+    function clamp() {
+      const w = iw * scale, h = ih * scale;
+      tx = Math.min(0, Math.max(FRAME_W - w, tx));
+      ty = Math.min(0, Math.max(FRAME_H - h, ty));
+    }
+    applyTransform();
+
+    let dragging = false, lastX = 0, lastY = 0;
+    frame.addEventListener("pointerdown", (e) => {
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
+      frame.setPointerCapture(e.pointerId);
+    });
+    frame.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      tx += e.clientX - lastX;
+      ty += e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      clamp();
+      applyTransform();
+    });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(ev => {
+      frame.addEventListener(ev, () => { dragging = false; });
+    });
+
+    const zoomRow = el("div", { class: "crop-zoom-row" });
+    const zoomSlider = el("input", { type: "range", min: "0", max: "100", value: "0", class: "crop-zoom-slider" });
+    zoomSlider.addEventListener("input", () => {
+      const t = parseInt(zoomSlider.value, 10) / 100;
+      const newScale = minScale + t * (maxScale - minScale);
+      const cx = FRAME_W / 2, cy = FRAME_H / 2;
+      const imgX = (cx - tx) / scale, imgY = (cy - ty) / scale;
+      scale = newScale;
+      tx = cx - imgX * scale;
+      ty = cy - imgY * scale;
+      clamp();
+      applyTransform();
+    });
+    zoomRow.appendChild(el("span", { class: "crop-zoom-label" }, "縮放"));
+    zoomRow.appendChild(zoomSlider);
+    modal.appendChild(zoomRow);
+
+    const actions = el("div", { class: "modal-actions" }, [
+      el("button", { class: "btn btn-outline", onclick: () => overlay.remove() }, "CANCEL"),
+      el("button", {
+        class: "btn btn-primary", onclick: () => {
+          const outW = 810, outH = 1440;
+          const canvas = document.createElement("canvas");
+          canvas.width = outW; canvas.height = outH;
+          const ctx = canvas.getContext("2d");
+          const sx = -tx / scale, sy = -ty / scale;
+          const sw = FRAME_W / scale, sh = FRAME_H / scale;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+          loadImageFromSrc(dataUrl).then((newImg) => {
+            state[kind] = { imgEl: newImg, dataUrl };
+            overlay.remove();
+            render();
+          }).catch(() => {
+            overlay.remove();
+            showToast("照片無法讀取，請重新選擇");
+          });
+        }
+      }, "CONFIRM")
+    ]);
+    modal.appendChild(actions);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+  }
+
+  function renderStepPhoto() {
+    const sec = el("section", { class: "step-panel" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "01"),
+      el("h2", {}, "CHOOSE PHOTO")
+    ]));
+    sec.appendChild(el("p", { class: "step-sub" }, "FRONT + BACK REQUIRED"));
+
+    const slots = el("div", { class: "photo-slots" }, [
+      renderPhotoSlot("front", "FRONT", "正面"),
+      renderPhotoSlot("back", "BACK", "背面")
+    ]);
+    sec.appendChild(slots);
+
+    let msg = "";
+    if (!state.front && !state.back) msg = "";
+    else if (!state.front) msg = "請補上正面照片";
+    else if (!state.back) msg = "請補上背面照片";
+
+    if (msg) sec.appendChild(el("p", { class: "field-error" }, msg));
+
+    const canContinue = !!(state.front && state.back);
+    sec.appendChild(el("div", { class: "step-actions" }, [
+      el("button", {
+        class: "btn btn-primary btn-full" + (canContinue ? "" : " is-disabled"),
+        onclick: () => { if (canContinue) setStep(2); }
+      }, "CONTINUE")
+    ]));
+
+    return sec;
+  }
+
+  /* --- Step 02: Check Photo --- */
+  function renderCheckCard(kind, labelEn) {
+    const current = state[kind];
+    const card = el("div", { class: "check-card" });
+    card.appendChild(el("div", { class: "check-card-label" }, labelEn));
+    const box = el("div", { class: "check-photo-box" });
+    if (current) box.appendChild(el("img", { src: current.dataUrl, alt: labelEn }));
+    card.appendChild(box);
+
+    const list = el("ul", { class: "check-list" });
+    list.appendChild(el("li", { id: "check-" + kind + "-loaded" }, "✓ PHOTO LOADED"));
+    list.appendChild(el("li", { id: "check-" + kind + "-person" }, "… PERSON DETECTED"));
+    list.appendChild(el("li", { id: "check-" + kind + "-fullbody" }, "… FULL BODY"));
+    card.appendChild(list);
+    card.appendChild(el("p", { class: "field-error", id: "check-msg-" + kind }, ""));
+    return card;
+  }
+
+  function renderStepCheck() {
+    const sec = el("section", { class: "step-panel" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "02"),
+      el("h2", {}, "CHECK PHOTO")
+    ]));
+
+    const row = el("div", { class: "check-row" }, [
+      renderCheckCard("front", "FRONT"),
+      renderCheckCard("back", "BACK")
+    ]);
+    sec.appendChild(row);
+
+    const continueBtn = el("button", { class: "btn btn-primary is-disabled" }, "CONTINUE");
+    continueBtn.addEventListener("click", () => {
+      if (!continueBtn.classList.contains("is-disabled")) setStep(3);
+    });
+
+    sec.appendChild(el("div", { class: "step-actions step-actions-split" }, [
+      el("button", { class: "btn btn-outline", onclick: () => setStep(1) }, "BACK"),
+      continueBtn
+    ]));
+
+    setTimeout(() => runPhotoChecks(continueBtn), 30);
+    return sec;
+  }
+
+  async function runPhotoChecks(continueBtn) {
+    let allOk = true;
+    for (const kind of ["front", "back"]) {
+      const data = state[kind];
+      const personItem = document.getElementById("check-" + kind + "-person");
+      const bodyItem = document.getElementById("check-" + kind + "-fullbody");
+      const msgEl = document.getElementById("check-msg-" + kind);
+      if (!data || !personItem || !bodyItem || !msgEl) continue;
+      try {
+        const r = await computePersonFrameCoverage(data.imgEl);
+        const personOk = r.coverage > 0.04;
+        const fullBodyOk = personOk && r.topRatio < 0.16 && r.bottomRatio > 0.84;
+        personItem.textContent = (personOk ? "✓ " : "✗ ") + "PERSON DETECTED";
+        bodyItem.textContent = (fullBodyOk ? "✓ " : "✗ ") + "FULL BODY";
+        if (!personOk) {
+          msgEl.textContent = "無法辨識人物，請重新選擇照片";
+          allOk = false;
+        } else if (!fullBodyOk) {
+          msgEl.textContent = "照片不完整，請重新拍攝";
+          allOk = false;
+        } else {
+          msgEl.textContent = "";
+        }
+      } catch (err) {
+        personItem.textContent = "✗ PERSON DETECTED";
+        bodyItem.textContent = "✗ FULL BODY";
+        msgEl.textContent = err && err.code === MODEL_UNAVAILABLE ? MODEL_UNAVAILABLE_MSG : "照片不完整，請重新拍攝";
+        allOk = false;
+      }
+    }
+    if (allOk) continueBtn.classList.remove("is-disabled");
+    else continueBtn.classList.add("is-disabled");
+  }
+
+  /* --- Step 03: Choose Color --- */
+  function renderStepColor() {
+    const sec = el("section", { class: "step-panel" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "03"),
+      el("h2", {}, "CHOOSE COLOR")
+    ]));
+    sec.appendChild(el("p", { class: "step-sub" }, "請選擇顏色"));
+
+    const row = el("div", { class: "color-row" });
+    [["RED", "紅"], ["YELLOW", "黃"], ["BLUE", "藍"]].forEach(([key, zh]) => {
+      const selected = state.color === key;
+      const card = el("button", {
+        class: "color-card color-" + key.toLowerCase() + (selected ? " is-selected" : ""),
+        onclick: () => { state.color = key; render(); }
+      }, [
+        el("span", { class: "color-card-en" }, key),
+        el("span", { class: "color-card-zh" }, zh),
+        el("span", { class: "color-card-check" }, selected ? "✓" : "")
+      ]);
+      row.appendChild(card);
+    });
+    sec.appendChild(row);
+
+    if (!state.color) sec.appendChild(el("p", { class: "field-error" }, "請選擇顏色"));
+
+    sec.appendChild(el("div", { class: "step-actions step-actions-split" }, [
+      el("button", { class: "btn btn-outline", onclick: () => setStep(2) }, "BACK"),
+      el("button", {
+        class: "btn btn-primary" + (state.color ? "" : " is-disabled"),
+        onclick: () => { if (state.color) setStep(4); }
+      }, "START ANALYSIS")
+    ]));
+    return sec;
+  }
+
+  /* --- Step 04: Analyze --- */
+  function renderStepAnalyze() {
+    const sec = el("section", { class: "step-panel step-panel-analyze" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "04"),
+      el("h2", {}, "ANALYZE")
+    ]));
+
+    const anim = el("div", { class: "analyze-anim" });
+    const gridLines = el("div", { class: "analyze-grid" }, [
+      el("span", { class: "a-block a-red" }),
+      el("span", { class: "a-block a-yellow" }),
+      el("span", { class: "a-block a-blue" })
+    ]);
+    anim.appendChild(gridLines);
+    sec.appendChild(anim);
+
+    const stages = [
+      "DETECTING PERSON",
+      "ANALYZING FRONT",
+      "ANALYZING BACK",
+      "APPLYING COLOR STANDARD",
+      "CALCULATING 50 / 50"
+    ];
+    const stageEl = el("p", { class: "analyze-stage" }, stages[0]);
+    sec.appendChild(stageEl);
+
+    // Kick off staged analysis after render
+    setTimeout(() => runAnalysis(stageEl, stages), 50);
+
+    return sec;
+  }
+
+  function runAnalysis(stageEl, stages) {
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      if (i < stages.length) {
+        stageEl.textContent = stages[i];
+      }
+    }, 380);
+
+    setTimeout(async () => {
+      clearInterval(interval);
+      try {
+        const frontResult = await scoringEngine.analyzePhoto(state.front.imgEl, state.color);
+        const backResult = await scoringEngine.analyzePhoto(state.back.imgEl, state.color);
+        const finalScore = scoringEngine.calculateFinalScore(frontResult.score, backResult.score);
+        state.analysis = { front: frontResult, back: backResult, finalScore };
+        setStep(5);
+      } catch (err) {
+        showToast(err && err.code === MODEL_UNAVAILABLE ? MODEL_UNAVAILABLE_MSG : "分析發生問題，請重新嘗試");
+        setStep(3);
+      }
+    }, 380 * (stages.length + 1));
+  }
+
+  /* --- Step 05: Result --- */
+  function renderStepResult() {
+    const sec = el("section", { class: "step-panel" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "05"),
+      el("h2", {}, "RESULT")
+    ]));
+
+    const a = state.analysis;
+    const colorKey = state.color;
+    const colorClass = "text-" + colorKey.toLowerCase();
+
+    const resultTop = el("div", { class: "result-top" }, [
+      el("div", { class: "result-photos" }, [
+        el("div", { class: "result-photo" }, [
+          el("img", { src: state.front.dataUrl, alt: "front" }),
+          el("span", {}, "FRONT")
+        ]),
+        el("div", { class: "result-photo" }, [
+          el("img", { src: state.back.dataUrl, alt: "back" }),
+          el("span", {}, "BACK")
+        ])
+      ]),
+      el("div", { class: "result-score-block" }, [
+        el("p", { class: "result-color-label " + colorClass }, colorKey),
+        el("p", { class: "result-score-number", id: "result-score-number" }, "0.0%"),
+        el("div", { class: "result-progress-track" }, [
+          el("div", { class: "result-progress-fill " + colorClass.replace("text-", "bg-"), id: "result-progress-fill", style: "width:0%" })
+        ]),
+        el("p", { class: "result-verdict", id: "result-verdict" }, "")
+      ])
+    ]);
+    sec.appendChild(resultTop);
+
+    const breakdown = el("div", { class: "result-breakdown" }, [
+      el("div", { class: "breakdown-row" }, [
+        el("span", {}, "FRONT"),
+        el("span", {}, scoringEngine.formatScore(a.front.score) + "%")
+      ]),
+      el("div", { class: "breakdown-row" }, [
+        el("span", {}, "BACK"),
+        el("span", {}, scoringEngine.formatScore(a.back.score) + "%")
+      ]),
+      el("div", { class: "breakdown-row breakdown-final" }, [
+        el("span", {}, "FINAL"),
+        el("span", {}, scoringEngine.formatScore(a.finalScore) + "%")
+      ]),
+      el("p", { class: "formula-line" },
+        `(${scoringEngine.formatScore(a.front.score)} + ${scoringEngine.formatScore(a.back.score)}) ÷ 2 = ${scoringEngine.formatScore(a.finalScore)}%`)
+    ]);
+    sec.appendChild(breakdown);
+
+    const segSource = (a.front.maskSource === "model" && a.back.maskSource === "model")
+      ? "AI MODEL"
+      : (a.front.maskSource === "model" || a.back.maskSource === "model")
+        ? "AI MODEL + FALLBACK"
+        : "FALLBACK HEURISTIC";
+
+    const analysisInfo = el("div", { class: "result-analysis-info" }, [
+      el("p", { class: "analysis-info-title" }, "ANALYSIS"),
+      el("div", { class: "analysis-info-grid" }, [
+        el("span", {}, "STANDARD"), el("span", {}, COLOR_STANDARD_VERSION),
+        el("span", {}, "SEGMENTATION"), el("span", {}, segSource),
+        el("span", {}, "CORE"), el("span", {}, "100%"),
+        el("span", {}, "NON-TARGET"), el("span", {}, "0%")
+      ])
+    ]);
+    sec.appendChild(analysisInfo);
+
+    const maskWrap = el("div", { class: "mask-section" }, [
+      el("p", { class: "mask-title" }, "SELECTED AREA"),
+      el("div", { class: "mask-row" }, [
+        el("div", { class: "mask-item" }, [el("img", { src: a.front.maskDataUrl }), el("span", {}, "FRONT")]),
+        el("div", { class: "mask-item" }, [el("img", { src: a.back.maskDataUrl }), el("span", {}, "BACK")])
+      ]),
+      el("div", { class: "mask-legend" }, [
+        el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch bg-" + colorKey.toLowerCase() }), "counted as " + colorKey]),
+        el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch legend-swatch-gray" }), "person, not counted"]),
+        el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch legend-swatch-black" }), "background, excluded"])
+      ])
+    ]);
+    sec.appendChild(maskWrap);
+
+    sec.appendChild(el("div", { class: "step-actions step-actions-split" }, [
+      el("button", { class: "btn btn-outline", onclick: () => setStep(3) }, "CHANGE COLOR"),
+      el("button", { class: "btn btn-primary", onclick: () => setStep(6) }, "CONTINUE")
+    ]));
+
+    // count-up animation after mount
+    setTimeout(() => animateResult(a.finalScore), 30);
+
+    return sec;
+  }
+
+  function animateResult(finalScore) {
+    const numEl = document.getElementById("result-score-number");
+    const fillEl = document.getElementById("result-progress-fill");
+    const verdictEl = document.getElementById("result-verdict");
+    if (!numEl || !fillEl) return;
+
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = reduceMotion ? 0 : 900;
+    const start = performance.now();
+
+    function frame(now) {
+      const t = duration === 0 ? 1 : Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = finalScore * eased;
+      numEl.textContent = current.toFixed(1) + "%";
+      fillEl.style.width = current.toFixed(1) + "%";
+      if (t < 1) requestAnimationFrame(frame);
+      else {
+        numEl.textContent = scoringEngine.formatScore(finalScore) + "%";
+        fillEl.style.width = Math.min(100, finalScore) + "%";
+        if (finalScore >= 80) {
+          verdictEl.textContent = "GREAT!";
+          verdictEl.classList.add("verdict-high");
+          launchCelebration();
+        } else if (finalScore >= 50) {
+          verdictEl.textContent = "NICE!";
+        } else {
+          verdictEl.textContent = "OHH...";
+          verdictEl.classList.add("verdict-low");
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function launchCelebration() {
+    const layer = el("div", { class: "celebrate-layer" });
+    const colors = ["c-red", "c-yellow", "c-blue"];
+    for (let i = 0; i < 9; i++) {
+      const piece = el("span", { class: "celebrate-piece " + colors[i % 3] });
+      piece.style.left = Math.random() * 100 + "%";
+      piece.style.animationDelay = (Math.random() * 0.3) + "s";
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 1600);
+  }
+
+  /* --- Step 06: Save --- */
+  function renderStepSave() {
+    const sec = el("section", { class: "step-panel" });
+    sec.appendChild(el("div", { class: "step-heading" }, [
+      el("span", { class: "step-number" }, "06"),
+      el("h2", {}, "SAVE")
+    ]));
+
+    const nameInput = el("input", { type: "text", class: "text-input", placeholder: "YOUR NAME", maxlength: "24" });
+    sec.appendChild(el("label", { class: "field-label" }, "YOUR NAME"));
+    sec.appendChild(nameInput);
+
+    sec.appendChild(el("p", { class: "notice-text" },
+      "儲存後，正反面照片將公開顯示於排行榜。 / Your FRONT + BACK photos will appear in the public ranking."));
+
+    const saveBtn = el("button", { class: "btn btn-primary btn-full" }, "SAVE RESULT");
+    const errorEl = el("p", { class: "field-error" }, "");
+    const doneWrap = el("div", { class: "save-done", style: "display:none" }, [
+      el("button", { class: "btn btn-outline", onclick: goRanking }, "VIEW RANKING"),
+      el("button", { class: "btn btn-outline", onclick: goHome }, "BACK TO HOME")
+    ]);
+
+    saveBtn.addEventListener("click", async () => {
+      const name = nameInput.value.trim();
+      if (!name) {
+        errorEl.textContent = "請輸入名稱";
+        return;
+      }
+      errorEl.textContent = "";
+      saveBtn.textContent = "SAVING...";
+      saveBtn.disabled = true;
+
+      try {
+        const a = state.analysis;
+        const frontMaskImg = await loadImageFromSrc(a.front.maskDataUrl);
+        const backMaskImg = await loadImageFromSrc(a.back.maskDataUrl);
+
+        const record = {
+          id: "r_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+          name,
+          color: state.color,
+          frontScore: a.front.score,
+          backScore: a.back.score,
+          finalScore: a.finalScore,
+          frontPhoto: resizeToDataUrl(state.front.imgEl, 960, 0.82, "image/jpeg"),
+          backPhoto: resizeToDataUrl(state.back.imgEl, 960, 0.82, "image/jpeg"),
+          frontThumb: resizeToDataUrl(state.front.imgEl, 260, 0.75, "image/jpeg"),
+          backThumb: resizeToDataUrl(state.back.imgEl, 260, 0.75, "image/jpeg"),
+          frontMask: resizeToDataUrl(frontMaskImg, 480, 1, "image/png"),
+          backMask: resizeToDataUrl(backMaskImg, 480, 1, "image/png"),
+          createdAt: Date.now(),
+          colorStandardVersion: COLOR_STANDARD_VERSION
+        };
+
+        const ok = storageManager.saveResult(record);
+        if (ok) {
+          saveBtn.textContent = "SAVED ✓";
+          doneWrap.style.display = "flex";
+        } else {
+          saveBtn.textContent = "SAVE RESULT";
+          saveBtn.disabled = false;
+          errorEl.textContent = "儲存失敗，請稍後再試";
+        }
+      } catch (err) {
+        saveBtn.textContent = "SAVE RESULT";
+        saveBtn.disabled = false;
+        errorEl.textContent = "儲存失敗，請稍後再試";
+      }
+    });
+
+    sec.appendChild(saveBtn);
+    sec.appendChild(errorEl);
+    sec.appendChild(doneWrap);
+
+    sec.appendChild(el("div", { class: "step-actions" }, [
+      el("button", { class: "btn btn-text", onclick: () => { resetFlow(); setStep(1); } }, "TRY AGAIN")
+    ]));
+
+    return sec;
+  }
+
+  /* ------------------------------- RANKING ---------------------------------- */
+  function renderRanking() {
+    const wrap = el("main", { class: "view view-ranking" });
+    wrap.appendChild(el("div", { class: "page-heading" }, [
+      el("span", { class: "page-eyebrow" }, "排行榜"),
+      el("h2", {}, "RANKING")
+    ]));
+
+    const filters = el("div", { class: "filter-row" });
+    ["ALL", "RED", "YELLOW", "BLUE"].forEach(f => {
+      filters.appendChild(el("button", {
+        class: "filter-chip" + (state.rankingFilter === f ? " is-active" : ""),
+        onclick: () => { state.rankingFilter = f; render(); }
+      }, f));
+    });
+    wrap.appendChild(filters);
+
+    let results = storageManager.getResults();
+    if (state.rankingFilter !== "ALL") {
+      results = results.filter(r => r.color === state.rankingFilter);
+    }
+    results.sort((x, y) => y.finalScore - x.finalScore || x.createdAt - y.createdAt);
+
+    if (results.length === 0) {
+      wrap.appendChild(el("div", { class: "empty-state" }, [
+        el("p", { class: "empty-title" }, "NO RESULTS YET"),
+        el("p", { class: "empty-sub" }, "Be the first."),
+        el("button", { class: "btn btn-primary", onclick: startFlow }, "START COLOR ??%")
+      ]));
+      return wrap;
+    }
+
+    const list = el("div", { class: "ranking-list" });
+    results.forEach((r, idx) => {
+      const card = el("button", { class: "ranking-card", onclick: () => goDetail(r.id) }, [
+        el("span", { class: "rank-number" }, String(idx + 1)),
+        el("span", { class: "rank-photo" }, [el("img", { src: r.frontThumb || r.frontPhoto, alt: r.name })]),
+        el("span", { class: "rank-info" }, [
+          el("span", { class: "rank-name" }, r.name),
+          el("span", { class: "rank-color text-" + r.color.toLowerCase() }, r.color)
+        ]),
+        el("span", { class: "rank-score" }, scoringEngine.formatScore(r.finalScore) + "%"),
+        el("span", { class: "rank-arrow" }, "›")
+      ]);
+      list.appendChild(card);
+    });
+    wrap.appendChild(list);
+    return wrap;
+  }
+
+  /* ------------------------------- DETAIL ---------------------------------- */
+  function renderDetail() {
+    const wrap = el("main", { class: "view view-detail" });
+    const results = storageManager.getResults();
+    const r = results.find(x => x.id === state.detailId);
+
+    if (!r) {
+      wrap.appendChild(el("p", { class: "empty-title" }, "此紀錄已不存在"));
+      wrap.appendChild(el("button", { class: "btn btn-outline", onclick: goRanking }, "BACK TO RANKING"));
+      return wrap;
+    }
+
+    wrap.appendChild(el("button", { class: "btn-text back-link", onclick: goRanking }, "‹ RANKING"));
+
+    wrap.appendChild(el("div", { class: "detail-head" }, [
+      el("h2", {}, r.name),
+      el("span", { class: "detail-color text-" + r.color.toLowerCase() }, r.color),
+      el("span", { class: "detail-score" }, scoringEngine.formatScore(r.finalScore) + "%")
+    ]));
+
+    wrap.appendChild(el("div", { class: "detail-photos" }, [
+      el("div", { class: "detail-photo" }, [el("img", { src: r.frontPhoto }), el("span", {}, "FRONT")]),
+      el("div", { class: "detail-photo" }, [el("img", { src: r.backPhoto }), el("span", {}, "BACK")])
+    ]));
+
+    wrap.appendChild(el("div", { class: "result-breakdown" }, [
+      el("div", { class: "breakdown-row" }, [el("span", {}, "FRONT SCORE"), el("span", {}, scoringEngine.formatScore(r.frontScore) + "%")]),
+      el("div", { class: "breakdown-row" }, [el("span", {}, "BACK SCORE"), el("span", {}, scoringEngine.formatScore(r.backScore) + "%")]),
+      el("div", { class: "breakdown-row breakdown-final" }, [el("span", {}, "FINAL SCORE"), el("span", {}, scoringEngine.formatScore(r.finalScore) + "%")]),
+      el("p", { class: "formula-line" },
+        `(${scoringEngine.formatScore(r.frontScore)} + ${scoringEngine.formatScore(r.backScore)}) ÷ 2 = ${scoringEngine.formatScore(r.finalScore)}%`),
+      el("p", { class: "formula-line formula-standard" }, r.colorStandardVersion)
+    ]));
+
+    if (r.frontMask && r.backMask) {
+      wrap.appendChild(el("div", { class: "mask-section" }, [
+        el("p", { class: "mask-title" }, "SELECTED AREA"),
+        el("div", { class: "mask-row" }, [
+          el("div", { class: "mask-item" }, [el("img", { src: r.frontMask }), el("span", {}, "FRONT")]),
+          el("div", { class: "mask-item" }, [el("img", { src: r.backMask }), el("span", {}, "BACK")])
+        ]),
+        el("div", { class: "mask-legend" }, [
+          el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch bg-" + r.color.toLowerCase() }), "counted as " + r.color]),
+          el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch legend-swatch-gray" }), "person, not counted"]),
+          el("span", { class: "legend-chip" }, [el("i", { class: "legend-swatch legend-swatch-black" }), "background, excluded"])
+        ])
+      ]));
+    }
+
+    const deleteZone = el("div", { class: "delete-zone" }, [
+      el("button", { class: "delete-link", onclick: () => openDeleteConfirm(r.id) }, "Delete record")
+    ]);
+    wrap.appendChild(deleteZone);
+
+    return wrap;
+  }
+
+  function openDeleteConfirm(id) {
+    state.pendingDeleteId = id;
+    const overlay = el("div", { class: "modal-overlay" });
+    const modal = el("div", { class: "modal" }, [
+      el("p", { class: "modal-title" }, "DELETE THIS RESULT?"),
+      el("p", { class: "modal-sub" }, "This action cannot be undone."),
+      el("div", { class: "modal-actions" }, [
+        el("button", { class: "btn btn-outline", onclick: () => overlay.remove() }, "CANCEL"),
+        el("button", { class: "btn btn-primary", onclick: () => { overlay.remove(); openPasswordModal(id); } }, "DELETE")
+      ])
+    ]);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+  }
+
+  function openPasswordModal(id) {
+    const overlay = el("div", { class: "modal-overlay" });
+    const input = el("input", { type: "password", class: "text-input", placeholder: "ADMIN PASSWORD", inputmode: "numeric" });
+    const errorEl = el("p", { class: "field-error" }, "");
+    const modal = el("div", { class: "modal" }, [
+      el("p", { class: "modal-title" }, "ENTER ADMIN PASSWORD"),
+      input,
+      errorEl,
+      el("div", { class: "modal-actions" }, [
+        el("button", { class: "btn btn-outline", onclick: () => overlay.remove() }, "CANCEL"),
+        el("button", {
+          class: "btn btn-primary", onclick: () => {
+            if (input.value === DELETE_PASSWORD) {
+              storageManager.deleteResult(id);
+              overlay.remove();
+              showToast("DELETED ✓");
+              goRanking();
+            } else {
+              errorEl.textContent = "密碼錯誤";
+            }
+          }
+        }, "CONFIRM")
+      ])
+    ]);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    input.focus();
+  }
+
+  /* ------------------------------- ABOUT ---------------------------------- */
+  function hueColor(h) {
+    return `hsl(${h}, 85%, 50%)`;
+  }
+
+  function renderStandardCard(title, rows) {
+    const card = el("div", { class: "standard-card" });
+    card.appendChild(el("h3", {}, title));
+    rows.forEach(([range, label, weight, hueForSwatch]) => {
+      card.appendChild(el("div", { class: "standard-row" }, [
+        el("span", { class: "standard-swatch", style: `background:${hueColor(hueForSwatch)}` }),
+        el("span", { class: "standard-range" }, range),
+        el("span", { class: "standard-label" }, label),
+        el("span", { class: "standard-weight" }, weight)
+      ]));
+    });
+    return card;
+  }
+
+  function renderAbout() {
+    const wrap = el("main", { class: "view view-about" });
+    wrap.appendChild(el("div", { class: "page-heading" }, [
+      el("span", { class: "page-eyebrow" }, "說明"),
+      el("h2", {}, "ABOUT COLOR ??%")
+    ]));
+
+    wrap.appendChild(el("section", { class: "about-block" }, [
+      el("h3", {}, "WHAT IS COLOR ??%"),
+      el("p", {}, "COLOR ??% measures how much of your visible person area matches your selected color."),
+      el("p", { class: "zh" }, "COLOR ??% 依照固定的 HSV 色彩標準，計算人物身上符合所選顏色的比例。")
+    ]));
+
+    wrap.appendChild(el("section", { class: "about-block" }, [
+      el("h3", {}, "HOW IT WORKS"),
+      el("ol", { class: "how-list" }, [
+        "Upload FRONT + BACK",
+        "Choose RED / YELLOW / BLUE",
+        "Detect the person",
+        "Analyze HSV",
+        "Calculate FRONT + BACK at 50 / 50",
+        "Get your score"
+      ].map((t, i) => el("li", {}, [el("span", { class: "how-num" }, String(i + 1).padStart(2, "0")), el("span", {}, t)])))
+    ]));
+
+    wrap.appendChild(el("section", { class: "about-block" }, [
+      el("h3", {}, "SAME PEOPLE. SAME STANDARD."),
+      el("p", {}, "Every entry is scored with " + COLOR_STANDARD_VERSION + ". Photo size, resolution, and framing never change the FRONT / BACK weight."),
+    ]));
+
+    // Hue wheel
+    const wheelWrap = el("section", { class: "about-block wheel-block" });
+    wheelWrap.appendChild(el("h3", {}, COLOR_STANDARD_VERSION + " — HUE WHEEL"));
+    const wheelGradient = buildWheelGradient();
+    wheelWrap.appendChild(el("div", { class: "hue-wheel", style: `background: conic-gradient(from -90deg, ${wheelGradient})` }, [
+      el("div", { class: "hue-wheel-center" }, "HUE\n0°–360°")
+    ]));
+    wheelWrap.appendChild(el("div", { class: "wheel-legend" }, [
+      el("span", { class: "legend-item text-red" }, "RED 294°–20°"),
+      el("span", { class: "legend-item text-yellow" }, "YELLOW 35°–67°"),
+      el("span", { class: "legend-item text-blue" }, "BLUE 180°–251°"),
+      el("span", { class: "legend-item" }, "NON-TARGET")
+    ]));
+    wrap.appendChild(wheelWrap);
+
+    wrap.appendChild(el("section", { class: "about-block standards-grid" }, [
+      renderStandardCard("RED", [
+        ["294°–360°", "CORE", "100%", 327],
+        ["0°–20°", "CORE", "100%", 10]
+      ]),
+      renderStandardCard("YELLOW", [
+        ["35°–67°", "CORE", "100%", 51]
+      ]),
+      renderStandardCard("BLUE", [
+        ["180°–251°", "CORE", "100%", 215]
+      ])
+    ]));
+
+    wrap.appendChild(el("section", { class: "about-block" }, [
+      el("h3", {}, "NON-TARGET"),
+      el("p", {}, "Hue 20°–35°, 67°–180°, and 251°–294°, plus any pixel with saturation below 22% or value below 12%, always score 0% — including black, white, and gray.")
+    ]));
+
+    wrap.appendChild(el("section", { class: "about-block" }, [
+      el("h3", {}, "SKIN & BODY PAINT"),
+      el("p", {}, "Face and body skin are part of the person area. Painted skin in your color counts. Unpainted, natural skin does not."),
+      el("p", { class: "zh" }, "臉與皮膚都算在人物範圍內；有彩繪且顏色正確就計分，自然膚色不計分。")
+    ]));
+
+    return wrap;
+  }
+
+  function buildWheelGradient() {
+    const stops = [];
+    const N = 72;
+    for (let i = 0; i <= N; i++) {
+      const h = (i / N) * 360;
+      stops.push(`${hueColor(h)} ${(i / N) * 100}%`);
+    }
+    return stops.join(", ");
+  }
+
+  /* ------------------------------- TOAST ---------------------------------- */
+  let toastTimer = null;
+  function showToast(msg) {
+    let t = document.getElementById("toast");
+    if (!t) {
+      t = el("div", { id: "toast", class: "toast" });
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("is-visible"), 2600);
+  }
+
+  function init() {
+    render();
+    preloadSegmenter();
+  }
+
+  return { init };
+})();
+
+document.addEventListener("DOMContentLoaded", App.init);
+
+</script>
+</body>
+</html>
