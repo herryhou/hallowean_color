@@ -1010,23 +1010,27 @@ function rgbToHsv(r, g, b) {
      mask[p]     === 1  -> pixel belongs to the main person
      skinMask[p] === 1  -> pixel is face or body skin (model only)
 
-   PRIMARY PATH — Google MediaPipe Image Segmenter (Tasks Vision) with the
-   "selfie_multiclass_256x256" model. This is the same class of approach
-   used by video-call background tools and background-removal apps: a
-   trained neural network labels every pixel, not a color rule. Classes:
+   PRIMARY MASK — Bria RMBG-1.4 (Transformers.js, ONNX): a 1024×1024 image
+   matting network. Far finer edges than category models — hair, limbs,
+   props. ~44MB, downloaded once and cached. WebGPU when available, WASM
+   otherwise. Supplies the person mask edges (no class labels).
+
+   SKIN CLASSES + RECALL + FALLBACK MASK — Google MediaPipe Image Segmenter
+   (Tasks Vision) with the "selfie_multiclass_256x256" model. A category
+   model:
      0 background, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others
-   Person = classes 1–5. Skin (2, 3) is reported separately so unpainted
-   skin can be kept out of the score while painted skin still counts.
-   CPU delegate is used on purpose: the GPU delegate is known to scramble
+   Runs alongside RMBG for three jobs: skin classes (2, 3) so unpainted
+   skin stays out of the score while painted skin still counts; recall —
+   its eroded interior is unioned into the RMBG mask to restore worn body
+   parts RMBG sometimes drops whole; and fallback person mask if RMBG
+   fails. CPU delegate on purpose: the GPU delegate is known to scramble
    the class order on iOS Safari.
 
-   HOSTING NOTE: the WASM runtime loads from jsdelivr and the model file
-   (~16MB) from storage.googleapis.com. A normal host (GitHub Pages etc.)
-   allows both. A sandboxed preview that blocks outside network requests
-   will make the model fail, and the app falls back automatically.
-
-   FALLBACK — segmentPersonHeuristic(): a color/flood-fill estimate, used
-   only when the model can't load. It is NOT real segmentation.
+   HOSTING NOTE: WASM runtimes load from jsdelivr, MediaPipe model (~16MB)
+   from storage.googleapis.com, RMBG-1.4 (~44MB) from huggingface.co. A
+   normal host (GitHub Pages etc.) allows all three. A sandboxed preview
+   that blocks outside network requests will make both fail, and the app
+   refuses to score (no silent color-heuristic fallback).
    ------------------------------------------------------------------------- */
 
 const TASKS_VISION_BASE = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304";
@@ -1059,10 +1063,72 @@ function getImageSegmenter() {
   return imageSegmenterPromise;
 }
 
-/* Starts downloading the model in the background as soon as the page
-   opens, so it's usually ready by the time the user reaches ANALYZE. */
+/* ---------------------------- RMBG-1.4 (primary) ---------------------------- */
+const TRANSFORMERS_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
+const RMBG_MODEL_ID = "briaai/RMBG-1.4";
+
+async function buildRMBG(device) {
+  const tr = await import(TRANSFORMERS_URL);
+  tr.env.allowLocalModels = false;
+  const model = await tr.AutoModel.from_pretrained(RMBG_MODEL_ID, {
+    config: { model_type: "custom" },
+    dtype: "fp32",
+    device
+  });
+  const processor = await tr.AutoProcessor.from_pretrained(RMBG_MODEL_ID, {
+    config: {
+      do_normalize: true,
+      do_pad: false,
+      do_rescale: true,
+      do_resize: true,
+      image_mean: [0.5, 0.5, 0.5],
+      image_std: [1, 1, 1],
+      feature_extractor_type: "ImageFeatureExtractor",
+      resample: 2,
+      rescale_factor: 0.00392156862745098,
+      size: { width: 1024, height: 1024 }
+    }
+  });
+  return { tr, model, processor };
+}
+
+let rmbgSegmenterPromise = null;
+function getRMBGSegmenter() {
+  if (!rmbgSegmenterPromise) {
+    rmbgSegmenterPromise = (async () => {
+      const first = navigator.gpu ? "webgpu" : "wasm";
+      try {
+        return await buildRMBG(first);
+      } catch (e) {
+        if (first === "wasm") throw e;
+        return await buildRMBG("wasm"); // WebGPU init can fail at runtime — retry on WASM
+      }
+    })();
+    rmbgSegmenterPromise.catch(() => { rmbgSegmenterPromise = null; });
+  }
+  return rmbgSegmenterPromise;
+}
+
+/* Matte output is a soft alpha 0–255; >=128 counts as person. */
+async function segmentPersonRMBG(imgEl, width, height) {
+  const { tr, model, processor } = await getRMBGSegmenter();
+  const c = document.createElement("canvas");
+  c.width = width; c.height = height;
+  c.getContext("2d").drawImage(imgEl, 0, 0, width, height);
+  const image = await tr.RawImage.fromURL(c.toDataURL("image/png"));
+  const { pixel_values } = await processor(image);
+  const { output } = await model({ input: pixel_values });
+  const matte = await tr.RawImage.fromTensor(output[0].mul(255).to("uint8")).resize(width, height);
+  const mask = new Uint8Array(width * height);
+  for (let p = 0; p < mask.length; p++) mask[p] = matte.data[p] >= 128 ? 1 : 0;
+  return { mask };
+}
+
+/* Starts downloading the models in the background as soon as the page
+   opens, so they're usually ready by the time the user reaches ANALYZE. */
 function preloadSegmenter() {
   getImageSegmenter().catch(() => {});
+  getRMBGSegmenter().catch(() => {});
 }
 
 async function segmentPersonModel(imgEl, width, height) {
@@ -1201,14 +1267,66 @@ function keepLargestComponent(mask, width, height) {
   return result;
 }
 
-/* FAIRNESS: every score must come from the same method. If the AI model
-   can't load, we do NOT silently score with the color fallback (it lets
+/* Erosion (min filter): shrinks a mask by `radius` px on every side.
+   Two separable passes — horizontal mins, then vertical. */
+function erodeMask(mask, width, height, radius) {
+  const tmp = new Uint8Array(mask.length);
+  const out = new Uint8Array(mask.length);
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    for (let x = 0; x < width; x++) {
+      let v = 1;
+      const x0 = Math.max(0, x - radius), x1 = Math.min(width - 1, x + radius);
+      for (let i = x0; i <= x1; i++) { if (!mask[row + i]) { v = 0; break; } }
+      tmp[row + x] = v;
+    }
+  }
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      let v = 1;
+      const y0 = Math.max(0, y - radius), y1 = Math.min(height - 1, y + radius);
+      for (let j = y0; j <= y1; j++) { if (!tmp[j * width + x]) { v = 0; break; } }
+      out[y * width + x] = v;
+    }
+  }
+  return out;
+}
+
+/* FAIRNESS: every score must come from real segmentation. If BOTH models
+   can't load, we do NOT silently score with a color heuristic (it lets
    background leak in and would make some entries incomparable). Instead
    we stop and tell the user why. */
 const MODEL_UNAVAILABLE = "MODEL_UNAVAILABLE";
 const MODEL_UNAVAILABLE_MSG = "AI 人物辨識模型無法載入，請用正式網址（例如 GitHub Pages）開啟網站，並確認網路連線";
 
 async function getPersonMask(imgEl, width, height) {
+  // PRIMARY: RMBG-1.4 matte (fine edges). MediaPipe runs alongside for skin
+  // AND for recall: RMBG occasionally drops whole worn body parts (a raised
+  // limb in costume, glove paws, a hood). Union with the ERODED MediaPipe
+  // interior restores them, while erosion keeps MediaPipe's coarse 256×256
+  // edge band out — so edge pixels stay RMBG-governed.
+  try {
+    const rmbgOut = await withTimeout(segmentPersonRMBG(imgEl, width, height), 60000, "rmbg");
+    let mask = keepLargestComponent(rmbgOut.mask, width, height);
+    let skinMask = null;
+    try {
+      const mp = await segmentPersonModel(imgEl, width, height);
+      const mpPerson = keepLargestComponent(mp.mask, width, height);
+      const radius = Math.max(3, Math.round(width / 200));
+      const mpInterior = erodeMask(mpPerson, width, height, radius);
+      for (let p = 0; p < mask.length; p++) if (mpInterior[p]) mask[p] = 1;
+      mask = keepLargestComponent(mask, width, height);
+      skinMask = mp.skinMask;
+      for (let p = 0; p < width * height; p++) if (!mask[p]) skinMask[p] = 0;
+    } catch (e) {
+      // Skin classes unavailable — painted-skin rule degrades gracefully (skinMask = null).
+    }
+    return { mask, skinMask, width, height, source: "rmbg" };
+  } catch (err) {
+    console.warn("RMBG segmentation unavailable, falling back to MediaPipe:", err);
+  }
+
+  // FALLBACK: MediaPipe category mask (person + skin classes in one pass).
   let out;
   try {
     out = await segmentPersonModel(imgEl, width, height);
@@ -1218,7 +1336,6 @@ async function getPersonMask(imgEl, width, height) {
     e.code = MODEL_UNAVAILABLE;
     throw e;
   }
-  // Only the main person: drop any second person / stray limb in frame.
   const mask = keepLargestComponent(out.mask, width, height);
   const skinMask = out.skinMask;
   for (let p = 0; p < width * height; p++) if (!mask[p]) skinMask[p] = 0;
@@ -2012,11 +2129,14 @@ const App = (() => {
     ]);
     sec.appendChild(breakdown);
 
-    const segSource = (a.front.maskSource === "model" && a.back.maskSource === "model")
-      ? "AI MODEL"
-      : (a.front.maskSource === "model" || a.back.maskSource === "model")
-        ? "AI MODEL + FALLBACK"
-        : "FALLBACK HEURISTIC";
+    const segSource = (a.front.maskSource === "rmbg" && a.back.maskSource === "rmbg")
+      ? "RMBG-1.4"
+      : (a.front.maskSource === "model" && a.back.maskSource === "model")
+        ? "MEDIAPIPE"
+        : (a.front.maskSource !== undefined && a.back.maskSource !== undefined &&
+           [a.front.maskSource, a.back.maskSource].every(s => s === "rmbg" || s === "model"))
+          ? "MIXED"
+          : "FALLBACK HEURISTIC";
 
     const analysisInfo = el("div", { class: "result-analysis-info" }, [
       el("p", { class: "analysis-info-title" }, "ANALYSIS"),

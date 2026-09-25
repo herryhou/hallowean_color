@@ -4,7 +4,7 @@
 
 ## 檔案結構
 
-- `index.html` — 整個 App（HTML + CSS + JS 單檔，約 2400 行），無 build、無框架
+- `index.html` — 整個 App（HTML + CSS + JS 單檔，約 2600 行），無 build、無框架
 - `assets/Tiger1.png`、`assets/Tiger2.png` — 測試照片
 - `readme.md` — 本文件
 
@@ -27,7 +27,11 @@
 
 `index.html` 內 `COLOR_STANDARD` 常數，版本字串 `COLOR_STANDARD_V3`。改範圍必須升版（V4…），舊結果保留當時版本。
 
-- **人物分割**：Google MediaPipe Image Segmenter（Tasks Vision WASM，`selfie_multiclass_256x256` 模型，jsdelivr + Google storage CDN，CPU delegate，30 秒逾時）。只保留最大人物連通區塊，其他入鏡的人 / 手 / 東西一律當背景。模型載入失敗自動退回背景色洪水填充啟發式（結果會標記來源，非真分割）
+- **人物分割**（雙模型）：
+  - **主模型 RMBG-1.4**（Bria，Transformers.js 3.8.1 + ONNX，jsdelivr CDN）— 1024×1024 專業摳圖 matting 模型（~44MB，首次下載後瀏覽器快取），WebGPU 優先、失敗退 WASM，60 秒逾時。負責遮罩邊緣（髮絲、細肢）
+  - **MediaPipe Image Segmenter**（Tasks Vision，`selfie_multiclass_256x256`，CPU delegate — GPU delegate 在 iOS Safari 會打亂類別順序）同時跑，三個用途：① 膚色類別（body-skin / face-skin）供皮膚規則用；② recall 修補 — RMBG 偶爾整塊漏掉穿著中的身體部位（抬起的手腳、手套、頭套），用「侵蝕 4px 後的 MediaPipe 內部區域」聯集回主遮罩（侵蝕把 MediaPipe 粗糙的 256×256 邊界帶削掉，邊界畫素仍由 RMBG 決定，不會把舊的混色邊界漂移問題帶回來）；③ RMBG 失敗時整張遮罩退回 MediaPipe
+  - 只保留最大人物連通區塊，其他入鏡的人 / 東西一律當背景
+  - **公平性規則**：兩個模型都載入失敗（如離線）→ 拒絕評分並顯示錯誤，**不**默默退回色彩啟發式分割（會讓背景色漏進分母、各紀錄不可比較）。結果頁 SEGMENTATION 欄標示來源：RMBG-1.4 / MEDIAPIPE / MIXED
 - **色相判斷**（HSV）：
   - 🔴 RED：H 294°–360° 及 0°–20°
   - 🟡 YELLOW：H 35°–67°
@@ -45,7 +49,7 @@
 
 ## 已知情況 / 限制
 
-- MediaPipe 模型與 Google Fonts 需網路；離線時評分退回啟發式分割（結果會標記）
+- RMBG-1.4（~44MB）、MediaPipe 模型（~16MB）與 Google Fonts 都需網路（模型下載後有瀏覽器快取）；完全離線時評分會被拒絕（MODEL_UNAVAILABLE，公平性規則，見上）
 - TAKE PHOTO 的 `getUserMedia` / capture 行動版需 HTTPS 或 localhost
 - 原始規格的「下載結果單張圖片檔」**未實作**（現只有留存 + 排行榜，無下載按鈕）
 - `favicon.ico` 404，無害
