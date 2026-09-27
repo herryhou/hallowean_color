@@ -1012,8 +1012,10 @@ function rgbToHsv(r, g, b) {
 
    PRIMARY MASK — Bria RMBG-1.4 (Transformers.js, ONNX): a 1024×1024 image
    matting network. Far finer edges than category models — hair, limbs,
-   props. ~44MB, downloaded once and cached. WebGPU when available, WASM
-   otherwise. Supplies the person mask edges (no class labels).
+   props. ~44MB, downloaded once and cached. WebGPU only — when navigator.gpu
+   is missing (every Safari before 26) RMBG is skipped entirely and MediaPipe
+   takes over: single-threaded WASM can't run it fast enough (no COOP/COEP on
+   GitHub Pages → no threads). Supplies the person mask edges (no labels).
 
    SKIN CLASSES + RECALL + FALLBACK MASK — Google MediaPipe Image Segmenter
    (Tasks Vision) with the "selfie_multiclass_256x256" model. A category
@@ -1096,11 +1098,14 @@ let rmbgSegmenterPromise = null;
 function getRMBGSegmenter() {
   if (!rmbgSegmenterPromise) {
     rmbgSegmenterPromise = (async () => {
-      const first = navigator.gpu ? "webgpu" : "wasm";
+      // Skip RMBG when WebGPU is missing: single-threaded WASM (GitHub Pages
+      // can't send COOP/COEP → no threads) runs the 44MB fp32 model far too
+      // slowly on phones — it would download, hit the 60s timeout, and fall
+      // back to MediaPipe anyway. Go straight to MediaPipe instead.
+      if (!navigator.gpu) throw new Error("webgpu-unavailable");
       try {
-        return await buildRMBG(first);
+        return await buildRMBG("webgpu");
       } catch (e) {
-        if (first === "wasm") throw e;
         return await buildRMBG("wasm"); // WebGPU init can fail at runtime — retry on WASM
       }
     })();
