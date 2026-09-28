@@ -914,10 +914,13 @@ button:focus-visible, input:focus-visible {
    these ranges must ship as COLOR_STANDARD_V2, and old results keep the
    version they were scored under.
    ------------------------------------------------------------------------- */
-const COLOR_STANDARD_VERSION = "COLOR_STANDARD_V3";
+const COLOR_STANDARD_VERSION = "COLOR_STANDARD_V4";
 
 /* V2 change: binary CORE-only classification (TRANSITION band removed).
-   Ranges confirmed by the user via the interactive hue-range picker. */
+   Ranges confirmed by the user via the interactive hue-range picker.
+   V4 change: hue ranges unchanged; skin exclusion is now per target color —
+   adaptive CbCr cluster for RED, the V3 MediaPipe-label rule for YELLOW,
+   none for BLUE (see V4 SKIN RULE below). */
 const COLOR_STANDARD = {
   RED: {
     core: [
@@ -972,18 +975,87 @@ function getColorWeight(h, s, v, targetColor) {
   return 0;
 }
 
-/* V3 SKIN RULE
+/* V4 SKIN RULE — per-target-color exclusion
    Skin (face + body) always belongs to the person area (denominator).
-   A skin pixel counts toward the score ONLY if it matches the target color
-   AND is clearly not natural skin tone — i.e. it's body paint / makeup.
-   Natural skin sits in a warm hue band with moderate saturation; paint is
-   far more saturated. Blue paint never overlaps natural skin at all. */
+   A skin pixel scores ONLY if it is clearly paint / makeup. Measured on
+   real photos, no single test separates skin from costume in every band:
+     - RED band [294,20): overlaps skin in HUE (skin hue bulk 20–45°), but
+       saturated red sits far outside skin chroma → adaptive CbCr cluster
+       (below) excludes skin even when MediaPipe mislabels or fails to load.
+     - YELLOW band [35,67): pale yellow fabric shares chroma AND hue AND
+       saturation with skin (measured: 80% of skin hue sits 20–45°, fabric
+       bulk 40–50°) — pixel-level separation does not exist. Only the
+       MediaPipe semantic label (skin vs clothes) separates them → the V3
+       label-based rule is kept for yellow.
+     - BLUE band [180,251]: never overlaps skin → no exclusion needed. */
 const SKIN_HUE_BAND = [350, 50];     // natural skin hue band (wraps past 0°)
 const SKIN_PAINT_SAT_MIN = 0.62;     // inside that band, paint must be at least this saturated
 
 function isNaturalSkinTone(h, s) {
   const inBand = h >= SKIN_HUE_BAND[0] || h < SKIN_HUE_BAND[1];
   return inBand && s < SKIN_PAINT_SAT_MIN;
+}
+
+/* Adaptive CbCr skin model (RED-target exclusion). Skin chroma is compact
+   in CbCr and nearly luminance-independent; the cluster is fitted per photo
+   on MediaPipe skin-class pixels, so it follows the photo's lighting.
+   Exclusion applies to EVERY pixel via Mahalanobis distance — misclassified
+   or unlabeled skin can no longer leak into a red score. Painted skin stays
+   far from the cluster, so it still counts. With too few samples
+   (< SKIN_MIN_SAMPLES px — MediaPipe unavailable, or fully covered person)
+   a fixed literature cluster is used: weaker, but never silently off. */
+const SKIN_MIN_SAMPLES = 500;
+const SKIN_GLOBAL_MEAN = [103, 150];  // classic CbCr skin-cluster center
+const SKIN_GLOBAL_STD = [16, 10];
+const SKIN_MAHAL2_MAX = 9.21;         // chi-square(2 df, 99%)
+const SKIN_VAR_FLOOR = 4;             // σ >= 2 per axis keeps the ellipse from degenerating on tight samples
+
+function rgbToCbCr(r, g, b) {
+  // r,g,b in 0..255
+  return [
+    128 - 0.168736 * r - 0.331264 * g + 0.5 * b,
+    128 + 0.5 * r - 0.418688 * g - 0.081312 * b
+  ];
+}
+
+function inverse2(a, b, c, d) {
+  const det = a * d - b * c;
+  return [d / det, -b / det, -c / det, a / det];
+}
+
+/* Fits this photo's CbCr skin cluster from MediaPipe skin-class pixels. */
+function buildSkinModel(skinMask, mask, data, width, height) {
+  const total = width * height;
+  let n = 0, scb = 0, scr = 0;
+  for (let p = 0; p < total; p++) {
+    if (mask[p] !== 1 || !skinMask || skinMask[p] !== 1) continue;
+    const i = p * 4;
+    const [cb, cr] = rgbToCbCr(data[i], data[i + 1], data[i + 2]);
+    scb += cb; scr += cr; n++;
+  }
+  if (n < SKIN_MIN_SAMPLES) {
+    return { mode: "global", mean: SKIN_GLOBAL_MEAN,
+             covInv: inverse2(SKIN_GLOBAL_STD[0] ** 2, 0, 0, SKIN_GLOBAL_STD[1] ** 2) };
+  }
+  const mean = [scb / n, scr / n];
+  let vcb = 0, vcr = 0, vcbcr = 0;
+  for (let p = 0; p < total; p++) {
+    if (mask[p] !== 1 || !skinMask || skinMask[p] !== 1) continue;
+    const i = p * 4;
+    const [cb0, cr0] = rgbToCbCr(data[i], data[i + 1], data[i + 2]);
+    const cb = cb0 - mean[0], cr = cr0 - mean[1];
+    vcb += cb * cb; vcr += cr * cr; vcbcr += cb * cr;
+  }
+  vcb = Math.max(vcb / n, SKIN_VAR_FLOOR);
+  vcr = Math.max(vcr / n, SKIN_VAR_FLOOR);
+  const corrCap = Math.sqrt(vcb * vcr) * 0.95;
+  vcbcr = Math.min(Math.max(vcbcr / n, -corrCap), corrCap);
+  return { mode: "adaptive", mean, covInv: inverse2(vcb, vcbcr, vcbcr, vcr) };
+}
+
+function skinMahal2(cb, cr, model) {
+  const dx = cb - model.mean[0], dy = cr - model.mean[1];
+  return model.covInv[0] * dx * dx + (model.covInv[1] + model.covInv[2]) * dx * dy + model.covInv[3] * dy * dy;
 }
 
 function rgbToHsv(r, g, b) {
@@ -1409,6 +1481,8 @@ const scoringEngine = {
     const maskOut = maskCtx.createImageData(w, h);
     const targetRgb = COLOR_HEX[targetColor] || [128, 128, 128];
 
+    const skinModel = buildSkinModel(skinMask, mask, data, w, h);
+
     for (let p = 0; p < w * h; p++) {
       const i = p * 4;
       if (mask[p] === 1) {
@@ -1417,7 +1491,13 @@ const scoringEngine = {
         const r = data[i] / 255, g = data[i + 1] / 255, b = data[i + 2] / 255;
         const { h: hue, s, v } = rgbToHsv(r, g, b);
         let weight = getColorWeight(hue, s, v, targetColor);
-        if (isSkin && weight > 0 && isNaturalSkinTone(hue, s)) weight = 0; // unpainted skin never scores
+        if (weight > 0 && targetColor === "RED") {
+          // chroma-cluster exclusion — see V4 SKIN RULE above
+          const [cb, cr] = rgbToCbCr(data[i], data[i + 1], data[i + 2]);
+          if (skinMahal2(cb, cr, skinModel) < SKIN_MAHAL2_MAX) weight = 0;
+        } else if (weight > 0 && targetColor === "YELLOW" && isSkin && isNaturalSkinTone(hue, s)) {
+          weight = 0; // unpainted skin never scores
+        }
         weightedTarget += weight;
 
         const col = weight === 1.0 ? targetRgb : [176, 176, 176];
@@ -1444,7 +1524,8 @@ const scoringEngine = {
       weightedTarget,
       personRatio,
       maskDataUrl: maskCanvas.toDataURL("image/png"),
-      maskSource
+      maskSource,
+      skinMode: skinModel.mode
     };
   },
 
@@ -2143,16 +2224,29 @@ const App = (() => {
           ? "MIXED"
           : "FALLBACK HEURISTIC";
 
+    const skinSource = (a.front.skinMode === "adaptive" && a.back.skinMode === "adaptive")
+      ? "ADAPTIVE"
+      : (a.front.skinMode && a.back.skinMode &&
+         [a.front.skinMode, a.back.skinMode].every(m => m === "adaptive" || m === "global"))
+        ? "GLOBAL FALLBACK"
+        : "MIXED";
+
     const analysisInfo = el("div", { class: "result-analysis-info" }, [
       el("p", { class: "analysis-info-title" }, "ANALYSIS"),
       el("div", { class: "analysis-info-grid" }, [
         el("span", {}, "STANDARD"), el("span", {}, COLOR_STANDARD_VERSION),
         el("span", {}, "SEGMENTATION"), el("span", {}, segSource),
+        el("span", {}, "SKIN RULE"), el("span", {}, skinSource),
         el("span", {}, "CORE"), el("span", {}, "100%"),
         el("span", {}, "NON-TARGET"), el("span", {}, "0%")
       ])
     ]);
     sec.appendChild(analysisInfo);
+
+    if (skinSource !== "ADAPTIVE") {
+      sec.appendChild(el("p", { class: "formula-line" },
+        "⚠ 膚色辨識使用後備模式（膚色樣本不足），膚色排除精確度較低，分數可能略微偏高"));
+    }
 
     const maskWrap = el("div", { class: "mask-section" }, [
       el("p", { class: "mask-title" }, "SELECTED AREA"),
@@ -2278,7 +2372,10 @@ const App = (() => {
           frontMask: resizeToDataUrl(frontMaskImg, 480, 1, "image/png"),
           backMask: resizeToDataUrl(backMaskImg, 480, 1, "image/png"),
           createdAt: Date.now(),
-          colorStandardVersion: COLOR_STANDARD_VERSION
+          colorStandardVersion: COLOR_STANDARD_VERSION,
+          skinMode: (a.front.skinMode === "adaptive" && a.back.skinMode === "adaptive")
+            ? "adaptive"
+            : "global"
         };
 
         const ok = storageManager.saveResult(record);
@@ -2543,8 +2640,8 @@ const App = (() => {
 
     wrap.appendChild(el("section", { class: "about-block" }, [
       el("h3", {}, "SKIN & BODY PAINT"),
-      el("p", {}, "Face and body skin are part of the person area. Painted skin in your color counts. Unpainted, natural skin does not."),
-      el("p", { class: "zh" }, "臉與皮膚都算在人物範圍內；有彩繪且顏色正確就計分，自然膚色不計分。")
+      el("p", {}, "Face and body skin are part of the person area. For RED, each photo's own skin cluster is fitted in CbCr space; pixels inside the cluster never score. For YELLOW, skin is excluded by the AI skin label. Painted skin counts in every color."),
+      el("p", { class: "zh" }, "臉與皮膚都算在人物範圍內。紅色：以該照片自身的膚色聚類（CbCr 自適應模型）排除自然膚色；黃色：以 AI 皮膚標籤排除。彩繪皮膚一律計分。")
     ]));
 
     return wrap;
