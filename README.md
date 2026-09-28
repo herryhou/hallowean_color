@@ -45,6 +45,10 @@
 - **計分**：單張 = 目標色像素 ÷ 人物像素 × 100%。最終 = (正面 + 背面) ÷ 2，各佔 50%
 - 分析解析度上限 1400px，CHECK 步驟用 480px 快速判斷
 
+## 測試
+
+`node tests/scoring.test.mjs` — 起 local server、用系統 Chrome 跑真實 app，對 `assets/T1.jpg`（front）/ `T2.jpg`（back）驗證三色 front/back/final 分數在容差內（V4 基準值）。需網路（模型首次下載約 60MB，之後有快取），首次執行需數分鐘。依賴 `npm i -D playwright-core`。改計分規則後跑它把新基準值寫回 `EXPECTED` / `FINAL_EXPECTED`。
+
 ## 儲存
 
 - `localStorage` key `colorpct_results_v1`，經 `storageManager` 抽象（未來可換 Supabase）

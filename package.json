@@ -1,0 +1,24 @@
+{
+  "name": "hallowean_color",
+  "version": "1.0.0",
+  "description": "單頁 Web App（繁中 UI、簡單英文為主）：活動用的「顏色佔比評分遊戲」。上傳正面 + 背面兩張照片，選定紅 / 黃 / 藍其中一色，App 會分割出人物、用固定標準算出該顏色佔全身的比例（0–100%），可留存結果並查看排行榜。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/herryhou/hallowean_color.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/herryhou/hallowean_color/issues"
+  },
+  "homepage": "https://github.com/herryhou/hallowean_color#readme",
+  "devDependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}
